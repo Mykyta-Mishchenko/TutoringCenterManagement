@@ -1,0 +1,22 @@
+#sidebar{
+    height:100vh;
+    padding-top: 4rem;
+    background-color:#191F26;
+    color: white;
+}
+#backOfSide{
+    height: 100%;
+    background-color:#191F26;
+    position: fixed;
+    z-index: -2;
+}
+#dashboard{
+    margin-top: 3.5rem;
+    background-color: #d3d3d3!important;
+}
+#navbar{
+    background-color: #161A1E!important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.2);
+    color: white;
+    padding-left: 1rem;
+}

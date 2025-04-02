@@ -1,0 +1,17 @@
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace backend.Data.DataModels
+{
+    public class RefreshSession
+    {
+        [BindNever]
+        public int SessionId { get; set; }
+        public int UserId { get; set; }
+        public string RefreshToken { get; set; }
+        public DateTime ExpireTime { get; set; }
+
+        public User User { get; set; }
+    }
+}
