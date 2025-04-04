@@ -1,4 +1,6 @@
-﻿using JwtBackend.Interfaces;
+﻿using backend.Interfaces.Repositories;
+using backend.Interfaces.Services;
+using backend.Services;
 using JwtBackend.Repositories;
 using JwtBackend.Services;
 
@@ -10,10 +12,12 @@ namespace JwtBackend.Extensions
         {
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ISessionRepository, SessionRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IProfileService, ProfileService>();
         }
     }
 }

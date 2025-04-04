@@ -1,14 +1,12 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { AuthService } from "../services/auth/auth.service";
-import { TokenService } from "../services/auth/token.service";
 import { Router } from "@angular/router";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 
 @Injectable()
 export class JwtErrorInterceptor implements HttpInterceptor{
     private authService = inject(AuthService);
-    private tokenService = inject(TokenService);
     private router = inject(Router);
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -38,7 +36,7 @@ export class JwtErrorInterceptor implements HttpInterceptor{
     }
 
     private addToken(req: HttpRequest<any>): HttpRequest<any>{
-        const accessToken = this.tokenService.ACCESS_TOKEN();
+        const accessToken = this.authService.ACCESS_TOKEN();
         if (accessToken) {
             return req.clone({
                 setHeaders: {

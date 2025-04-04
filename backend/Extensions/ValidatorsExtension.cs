@@ -1,0 +1,18 @@
+﻿using backend.Validators;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using JwtBackend.Validators;
+
+namespace backend.Extensions
+{
+    public static class ValidatorsExtension
+    {
+        public static void AddValidators(this IServiceCollection services)
+        {
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<SignUpDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<SignInDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<UserProfileValidator>();
+        }
+    }
+}

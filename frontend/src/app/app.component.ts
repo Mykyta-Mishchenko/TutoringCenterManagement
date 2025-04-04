@@ -1,13 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from "./shared/navbar/navbar.component";
+import { NavbarComponent } from "./shared/components/navbar/navbar.component";
 import { AuthService } from './core/services/auth/auth.service';
-import { NgIf } from '@angular/common';
+import { SidebarComponent } from "./shared/components/sidebar/sidebar.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, NgIf],
+  imports: [RouterOutlet, NavbarComponent, SidebarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

@@ -1,16 +1,14 @@
 import { inject, Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, GuardResult, Router, RouterStateSnapshot } from "@angular/router";
-import { TokenService } from "../services/auth/token.service";
 import { AuthService } from "../services/auth/auth.service";
 
 @Injectable({ providedIn: 'root' })
 export class CanActivateAuthorizedPages implements CanActivate{
     private router = inject(Router);
-    private tokenService = inject(TokenService);
     private authService = inject(AuthService);
     
     async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<GuardResult> {
-        const accessToken = await this.tokenService.checkTokenValidity();
+        const accessToken = await this.authService.checkTokenValidity();
         if (this.authService.isLoggedIn()) {
             this.authService.updateUserByToken(accessToken);
             return true;

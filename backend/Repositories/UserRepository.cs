@@ -1,6 +1,6 @@
 ﻿using backend.Data.DataModels;
+using backend.Interfaces.Repositories;
 using JwtBackend.Data;
-using JwtBackend.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace JwtBackend.Repositories
@@ -26,6 +26,40 @@ namespace JwtBackend.Repositories
         public async Task<User> GetUser(string email)
         {
             return await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task<string> GetUserProfile(int userId)
+        {
+            var profile = await _identityDbContext.UsersProfile.FirstOrDefaultAsync(u => u.UserId == userId);
+            return profile?.ProfileImgUrl ?? "";
+        }
+
+        public async Task SetUserProfile(int userId, string profileImgUrl)
+        {
+            try
+            {
+                var dbUserProfile = await _identityDbContext.UsersProfile.FirstOrDefaultAsync(p => p.UserId == userId);
+                var newUserProfile = new UserProfile
+                {
+                    UserId = userId,
+                    ProfileImgUrl = profileImgUrl
+                };
+
+                if (dbUserProfile == null)
+                {
+                    await _identityDbContext.UsersProfile.AddAsync(newUserProfile);
+                }
+                else
+                {
+                    dbUserProfile.ProfileImgUrl = profileImgUrl;
+                }
+
+                await _identityDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public async Task RemoveUser(User user)

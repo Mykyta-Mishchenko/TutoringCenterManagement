@@ -1,8 +1,8 @@
 ﻿using backend.Data.DataModels;
-using JwtBackend.Interfaces;
+using backend.Interfaces.Repositories;
+using backend.Interfaces.Services;
+using backend.Models;
 using JwtBackend.Models;
-using Microsoft.Identity.Client;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -14,7 +14,7 @@ namespace JwtBackend.Services
         private readonly IRoleRepository _roleRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly ITokenService _tokenService;
-        
+
         public AuthService(
             IUserRepository userRepository, 
             IRoleRepository roleRepository,
@@ -26,7 +26,7 @@ namespace JwtBackend.Services
             _sessionRepository = sessionRepository;
             _tokenService = tokenService;
         }
-        public async Task<SignUpResult> SignUp(User user)
+        public async Task<SignUpResult> SignUp(User user, UserRole role)
         {
             var dbUser = await _userRepository.GetUser(user.Email);
             if(dbUser == null)
@@ -36,7 +36,15 @@ namespace JwtBackend.Services
                     await _userRepository.AddUser(user);
                     dbUser = await _userRepository.GetUser(user.Email);
 
-                    await _roleRepository.GiveUserRole(dbUser, "user");
+                    var roleName = role.ToString();
+
+                    if (!_roleRepository.IsRoleExists(roleName))
+                    {
+                        await _roleRepository.CreateRole(roleName);
+                    }
+                    await _roleRepository.GiveUserRole(dbUser, roleName);
+
+                    await _userRepository.SetUserProfile(dbUser.UserId, "");
 
                     return SignUpResult.Success;
                 }

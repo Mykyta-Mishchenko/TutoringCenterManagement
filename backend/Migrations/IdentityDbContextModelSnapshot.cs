@@ -110,6 +110,19 @@ namespace backend.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Data.DataModels.UserProfile", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProfileImgUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("UsersProfile", (string)null);
+                });
+
             modelBuilder.Entity("backend.Data.DataModels.UserRoles", b =>
                 {
                     b.Property<int>("UserId")
@@ -130,6 +143,17 @@ namespace backend.Migrations
                     b.HasOne("backend.Data.DataModels.User", "User")
                         .WithMany("Sessions")
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Data.DataModels.UserProfile", b =>
+                {
+                    b.HasOne("backend.Data.DataModels.User", "User")
+                        .WithOne("UserProfile")
+                        .HasForeignKey("backend.Data.DataModels.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -163,6 +187,9 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Data.DataModels.User", b =>
                 {
                     b.Navigation("Sessions");
+
+                    b.Navigation("UserProfile")
+                        .IsRequired();
 
                     b.Navigation("UserRoles");
                 });

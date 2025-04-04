@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using backend.Data.DataModels;
+using backend.DTO;
 using backend.DTO.AuthDTO;
-using JwtBackend.Interfaces;
+using backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,7 @@ namespace JwtBackend.Controllers
         private readonly IMapper _mapper;
         private readonly IAuthService _authService;
         private readonly ITokenService _tokenService;
+        
         public AuthorizationController(
             IMapper mapper,
             IAuthService authService,
@@ -56,7 +58,7 @@ namespace JwtBackend.Controllers
             }
 
             var user = _mapper.Map<User>(request);
-            var result = await _authService.SignUp(user);
+            var result = await _authService.SignUp(user, request.Role);
             if (!result.Succeeded)
             {
                 return BadRequest("Can't sign up user. Try again.");

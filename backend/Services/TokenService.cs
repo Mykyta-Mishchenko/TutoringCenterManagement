@@ -1,6 +1,7 @@
 ﻿using backend.Data.DataModels;
-using JwtBackend.Interfaces;
-using Microsoft.Extensions.Configuration;
+using backend.Interfaces.Repositories;
+using backend.Interfaces.Services;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -52,7 +53,7 @@ namespace JwtBackend.Services
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Sid, user.UserId.ToString()),
+                new Claim("sid", user.UserId.ToString()),
                 new Claim(ClaimTypes.Name, user.FirstName),
                 new Claim(ClaimTypes.Surname, user.LastName ?? ""),
                 new Claim(ClaimTypes.Email, user.Email)

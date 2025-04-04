@@ -20,6 +20,10 @@ namespace JwtBackend.Validators
                 .NotEmpty().WithMessage("Email is required")
                 .EmailAddress().WithMessage("Invalid email format");
 
+            RuleFor(x => x.Role)
+                .NotEmpty().WithMessage("Role is required")
+                .IsInEnum().WithMessage("Invalid role specified");
+
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Password is required")
                 .Matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[_-])[A-Za-z\\d_-]{8,}$")

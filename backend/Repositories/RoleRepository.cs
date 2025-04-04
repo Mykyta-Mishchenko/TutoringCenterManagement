@@ -1,6 +1,6 @@
 ﻿using backend.Data.DataModels;
+using backend.Interfaces.Repositories;
 using JwtBackend.Data;
-using JwtBackend.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 

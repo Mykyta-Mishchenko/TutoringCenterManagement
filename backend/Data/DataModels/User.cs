@@ -14,6 +14,7 @@ namespace backend.Data.DataModels
         public string Password { get; set; }
         public bool RememberMe { get; set; }
 
+        public UserProfile UserProfile { get; set; }
         public ICollection<UserRoles> UserRoles { get; set; }
         public ICollection<RefreshSession> Sessions { get; set; }
     }

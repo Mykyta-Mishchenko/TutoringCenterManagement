@@ -11,6 +11,7 @@ namespace JwtBackend.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRoles> UsersRoles { get; set; }
+        public DbSet<UserProfile> UsersProfile { get; set; }
         public DbSet<RefreshSession> RefreshSessions { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

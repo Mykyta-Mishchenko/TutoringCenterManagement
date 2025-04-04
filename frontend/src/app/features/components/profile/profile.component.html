@@ -1,0 +1,24 @@
+<div class="row p-1">
+    <div class="col-md-9" id="schedule-board">
+
+    </div>
+    <div class="col-md-3" id="profile-board">
+        <div class="card" id="profile">
+            <div class="profile-box"
+                [ngClass]="!user()?.profileImgUrl ? 'empty-profile-img': 'filled-profile-img'">
+                <img [src]="profileImgUrl()" class="profile-img mt-3 mb-3">
+            </div>
+            <button class="btn btn-outline-primary" (click)="triggerFileInput()">Upload profile img</button>
+            <input type="file" id="fileInput" (change)="onFileSelected($event)" style="display: none;">
+            <div *ngIf="errorMessage" class="alert alert-danger mt-2">
+                {{ errorMessage }}
+              </div>
+            <div class="card-body">
+                <h5 clas="card-title">
+                    {{ user()?.username }}
+                </h5>
+                <p class="card-text">Info about user groups and so on</p>
+            </div>
+        </div>
+    </div>
+</div>

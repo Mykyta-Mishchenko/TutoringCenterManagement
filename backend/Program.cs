@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using JwtBackend.Validators;
 using JwtBackend.Extensions;
 using JwtBackend.Mapping;
+using backend.DTO;
+using backend.Validators;
+using backend.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,9 +37,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddApplicationServices();
 
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<SignUpDTOValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<SignInDTOValidator>();
+builder.Services.AddValidators();
+
 builder.Services.AddAutoMapper(typeof(UserProfile));
 
 builder.Services.AddEndpointsApiExplorer();
@@ -50,9 +52,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors("CorsPolicy");
+
+app.UseStaticFiles();
 
 app.UseAuthentication();
 app.UseAuthorization();
