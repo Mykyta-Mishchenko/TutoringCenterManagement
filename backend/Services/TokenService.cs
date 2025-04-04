@@ -45,11 +45,11 @@ namespace JwtBackend.Services
             });
         }
 
-        public async Task<string> CreateAccessToken(User user)
+        public async Task<string> CreateAccessTokenAsync(User user)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
-            var roles = await _roleRepository.GetUserRoles(user);
+            var roles = await _roleRepository.GetUserRolesAsync(user);
 
             var claims = new List<Claim>
             {

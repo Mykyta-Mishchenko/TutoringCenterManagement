@@ -36,7 +36,7 @@ namespace JwtBackend.Controllers
                 return BadRequest("Check your sign in form.");
             }
             var user = _mapper.Map<User>(request);
-            var result = await _authService.SignIn(user);
+            var result = await _authService.SignInAsync(user);
 
             if (!result.Succeeded)
             {
@@ -58,7 +58,7 @@ namespace JwtBackend.Controllers
             }
 
             var user = _mapper.Map<User>(request);
-            var result = await _authService.SignUp(user, request.Role);
+            var result = await _authService.SignUpAsync(user, request.Role);
             if (!result.Succeeded)
             {
                 return BadRequest("Can't sign up user. Try again.");
@@ -76,7 +76,7 @@ namespace JwtBackend.Controllers
                 return Unauthorized();
             }
 
-            var result = await _authService.RefreshSession(refreshToken);
+            var result = await _authService.RefreshSessionAsync(refreshToken);
             if(result != null)
             {
                 _tokenService.AppendRefreshToken(HttpContext, result.RefreshToken);

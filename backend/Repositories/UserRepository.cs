@@ -12,29 +12,29 @@ namespace JwtBackend.Repositories
         {
             _identityDbContext = identityDbContext;
         }
-        public async Task AddUser(User user)
+        public async Task AddUserAsync(User user)
         {
             await _identityDbContext.Users.AddAsync(user);
             await _identityDbContext.SaveChangesAsync();
         }
 
-        public async Task<User> GetUser(int Id)
+        public async Task<User> GetUserAsync(int Id)
         {
             return await _identityDbContext.Users.FindAsync(Id);
         }
 
-        public async Task<User> GetUser(string email)
+        public async Task<User> GetUserAsync(string email)
         {
             return await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task<string> GetUserProfile(int userId)
+        public async Task<string> GetUserProfileAsync(int userId)
         {
             var profile = await _identityDbContext.UsersProfile.FirstOrDefaultAsync(u => u.UserId == userId);
             return profile?.ProfileImgUrl ?? "";
         }
 
-        public async Task SetUserProfile(int userId, string profileImgUrl)
+        public async Task SetUserProfileAsync(int userId, string profileImgUrl)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace JwtBackend.Repositories
             }
         }
 
-        public async Task RemoveUser(User user)
+        public async Task RemoveUserAsync(User user)
         {
             var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if(dbUser != null)
@@ -72,7 +72,7 @@ namespace JwtBackend.Repositories
             }
         }
 
-        public async Task UpdateUser(User user)
+        public async Task UpdateUserAsync(User user)
         {
             var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if(dbUser != null)

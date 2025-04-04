@@ -13,7 +13,7 @@ namespace JwtBackend.Repositories
         {
             _identityDbContext = identityDbContext;
         }
-        public async Task CreateRole(string roleName)
+        public async Task CreateRoleAsync(string roleName)
         {
             await _identityDbContext.Roles.AddAsync(new Role { Name = roleName});
             await _identityDbContext.SaveChangesAsync();
@@ -34,12 +34,12 @@ namespace JwtBackend.Repositories
             return _identityDbContext.Roles.FirstOrDefault(r => r.Name == roleName) != null;
         }
 
-        public async Task<IList<Role>> GetRoles()
+        public async Task<IList<Role>> GetRolesAsync()
         {
             return await _identityDbContext.Roles.ToListAsync();
         }
 
-        public async Task<IList<Role>> GetUserRoles(User user)
+        public async Task<IList<Role>> GetUserRolesAsync(User user)
         {
             var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if(dbUser != null)
@@ -52,7 +52,7 @@ namespace JwtBackend.Repositories
             return new List<Role>();
         }
 
-        public async Task GiveUserRole(User user, string roleName)
+        public async Task GiveUserRoleAsync(User user, string roleName)
         {
             var dbRole = await _identityDbContext.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
             var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);

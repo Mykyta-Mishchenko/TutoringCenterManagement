@@ -26,25 +26,25 @@ namespace JwtBackend.Services
             _sessionRepository = sessionRepository;
             _tokenService = tokenService;
         }
-        public async Task<SignUpResult> SignUp(User user, UserRole role)
+        public async Task<SignUpResult> SignUpAsync(User user, UserRole role)
         {
-            var dbUser = await _userRepository.GetUser(user.Email);
+            var dbUser = await _userRepository.GetUserAsync(user.Email);
             if(dbUser == null)
             {
                 try {
                     user.Password = HashPassword(user.Password);
-                    await _userRepository.AddUser(user);
-                    dbUser = await _userRepository.GetUser(user.Email);
+                    await _userRepository.AddUserAsync(user);
+                    dbUser = await _userRepository.GetUserAsync(user.Email);
 
                     var roleName = role.ToString();
 
                     if (!_roleRepository.IsRoleExists(roleName))
                     {
-                        await _roleRepository.CreateRole(roleName);
+                        await _roleRepository.CreateRoleAsync(roleName);
                     }
-                    await _roleRepository.GiveUserRole(dbUser, roleName);
+                    await _roleRepository.GiveUserRoleAsync(dbUser, roleName);
 
-                    await _userRepository.SetUserProfile(dbUser.UserId, "");
+                    await _userRepository.SetUserProfileAsync(dbUser.UserId, "");
 
                     return SignUpResult.Success;
                 }
@@ -57,9 +57,9 @@ namespace JwtBackend.Services
             return SignUpResult.EmailFailure;
         }
 
-        public async Task<SignInResult> SignIn(User user)
+        public async Task<SignInResult> SignInAsync(User user)
         {
-            var dbUser = await _userRepository.GetUser(user.Email);
+            var dbUser = await _userRepository.GetUserAsync(user.Email);
             if(dbUser != null)
             {
                 if(dbUser.Password != HashPassword(user.Password))
@@ -68,7 +68,7 @@ namespace JwtBackend.Services
                 }
                 try
                 {
-                    var sessions = await _sessionRepository.GetSession(dbUser);
+                    var sessions = await _sessionRepository.GetSessionAsync(dbUser);
                     if (sessions.Count() > 5)
                     {
                         _sessionRepository.RemoveUserSessions(dbUser);
@@ -79,12 +79,12 @@ namespace JwtBackend.Services
                         RefreshToken = _tokenService.CreateRefreshToken(),
                         ExpireTime = DateTime.UtcNow.AddDays(_tokenService.RefreshTokenExpirationDays)
                     };
-                    await _sessionRepository.AddSession(session);
+                    await _sessionRepository.AddSessionAsync(session);
                     return SignInResult.SignedIn(
                         new SessionTokens()
                         {
                             RefreshToken = session.RefreshToken,
-                            AccessToken = await _tokenService.CreateAccessToken(dbUser),
+                            AccessToken = await _tokenService.CreateAccessTokenAsync(dbUser),
                         }
                     );
                 }
@@ -102,36 +102,36 @@ namespace JwtBackend.Services
             _sessionRepository.RemoveSession(refreshToken);
         }
 
-        public async Task AddUserRole(User user, string roleName)
+        public async Task AddUserRoleAsync(User user, string roleName)
         {
-            var dbUser = await _userRepository.GetUser(user.Email);
+            var dbUser = await _userRepository.GetUserAsync(user.Email);
             var roleExists = _roleRepository.IsRoleExists(roleName);
             if (dbUser != null && roleExists)
             {
-                await _roleRepository.GiveUserRole(dbUser, roleName);
+                await _roleRepository.GiveUserRoleAsync(dbUser, roleName);
             }
         }
 
-        public async Task AddRole(string roleName)
+        public async Task AddRoleAsync(string roleName)
         {
             var roleExists = _roleRepository.IsRoleExists(roleName);
             if (!roleExists)
             {
-                await _roleRepository.CreateRole(roleName);
+                await _roleRepository.CreateRoleAsync(roleName);
             }
         }
 
-        public async Task<SessionTokens?> RefreshSession(string refreshToken)
+        public async Task<SessionTokens?> RefreshSessionAsync(string refreshToken)
         {
-            var session = await _sessionRepository.GetSession(refreshToken);
+            var session = await _sessionRepository.GetSessionAsync(refreshToken);
 
             if (session != null)
             {
-                var user = await _userRepository.GetUser(session.UserId);
+                var user = await _userRepository.GetUserAsync(session.UserId);
 
                 var newRefreshToken = _tokenService.CreateRefreshToken();
-                var newAccessToken = await _tokenService.CreateAccessToken(user);
-                await _sessionRepository.UpdateSession(refreshToken, newRefreshToken);
+                var newAccessToken = await _tokenService.CreateAccessTokenAsync(user);
+                await _sessionRepository.UpdateSessionAsync(refreshToken, newRefreshToken);
 
                 return new SessionTokens()
                 {

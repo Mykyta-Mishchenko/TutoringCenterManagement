@@ -24,7 +24,7 @@ namespace backend.Controllers
 
             if (ModelState.IsValid)
             {
-                await _profileService.SetUserProfile(refreshToken, userProfile.ProfileImg);
+                await _profileService.SetUserProfileAsync(refreshToken, userProfile.ProfileImg);
             }
             return Ok();
         }
@@ -32,7 +32,7 @@ namespace backend.Controllers
         [HttpGet("image")]
         public async Task<IActionResult> GetProfileImage([FromQuery]int userId)
         {
-            var imageBytes = await _profileService.GetUserProfile(userId);
+            var imageBytes = await _profileService.GetUserProfileAsync(userId);
             if(imageBytes == null)
             {
                 return NotFound();

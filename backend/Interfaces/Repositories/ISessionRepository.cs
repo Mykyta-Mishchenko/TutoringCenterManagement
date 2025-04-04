@@ -4,17 +4,17 @@ namespace backend.Interfaces.Repositories
 {
     public interface ISessionRepository
     {
-        public Task AddSession(RefreshSession session);
+        public Task AddSessionAsync(RefreshSession session);
         public void RemoveSession(string refreshToken);
         public void RemoveUserSessions(User user);
         /// <summary>
         /// Get session by User
         /// </summary>
-        public Task<IList<RefreshSession>> GetSession(User user);
+        public Task<IList<RefreshSession>> GetSessionAsync(User user);
         /// <summary>
         /// Get session by Token
         /// </summary>
-        public Task<RefreshSession> GetSession(string refreshToken);
-        public Task UpdateSession(string oldRefreshToken, string newRefreshToken);
+        public Task<RefreshSession> GetSessionAsync(string refreshToken);
+        public Task UpdateSessionAsync(string oldRefreshToken, string newRefreshToken);
     }
 }

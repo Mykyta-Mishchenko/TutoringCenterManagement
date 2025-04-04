@@ -12,13 +12,13 @@ namespace JwtBackend.Repositories
         {
             _identityDbContext = identityDbContext;
         }
-        public async Task AddSession(RefreshSession session)
+        public async Task AddSessionAsync(RefreshSession session)
         {
             await _identityDbContext.RefreshSessions.AddAsync(session);
             await _identityDbContext.SaveChangesAsync();
         }
 
-        public async Task<IList<RefreshSession>> GetSession(User user)
+        public async Task<IList<RefreshSession>> GetSessionAsync(User user)
         {
             var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if(dbUser != null)
@@ -30,7 +30,7 @@ namespace JwtBackend.Repositories
             return new List<RefreshSession> ();
         }
 
-        public async Task<RefreshSession> GetSession(string refreshToken)
+        public async Task<RefreshSession> GetSessionAsync(string refreshToken)
         {
             return await _identityDbContext.RefreshSessions.FirstOrDefaultAsync(s => s.RefreshToken == refreshToken);
         }
@@ -56,7 +56,7 @@ namespace JwtBackend.Repositories
             }
         }
 
-        public async Task UpdateSession(string oldRefreshToken, string newRefreshToken)
+        public async Task UpdateSessionAsync(string oldRefreshToken, string newRefreshToken)
         {
             var session = await _identityDbContext.RefreshSessions.FirstOrDefaultAsync(s=>s.RefreshToken == oldRefreshToken);
             if(session != null)

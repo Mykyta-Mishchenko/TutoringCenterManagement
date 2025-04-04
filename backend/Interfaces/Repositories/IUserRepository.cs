@@ -4,18 +4,18 @@ namespace backend.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        public Task AddUser(User user);
-        public Task RemoveUser(User user);
-        public Task UpdateUser(User user);
+        public Task AddUserAsync(User user);
+        public Task RemoveUserAsync(User user);
+        public Task UpdateUserAsync(User user);
         /// <summary>
         /// Get User by id
         /// </summary>
-        public Task<User> GetUser(int Id);
+        public Task<User> GetUserAsync(int Id);
         /// <summary>
         /// Get User by email
         /// </summary>
-        public Task<User> GetUser(string email);
-        public Task<string> GetUserProfile(int userId);
-        public Task SetUserProfile(int userId, string profileImgUrl);
+        public Task<User> GetUserAsync(string email);
+        public Task<string> GetUserProfileAsync(int userId);
+        public Task SetUserProfileAsync(int userId, string profileImgUrl);
     }
 }
