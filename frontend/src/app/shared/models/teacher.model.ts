@@ -2,7 +2,7 @@ import { Subject } from "./subject.model";
 
 export interface Teacher{
     id: number;
-    name: string;
+    fullName: string;
     subjects: Subject[];
-    profileImgUrl: string;
+    profileImgUrl: string | null;
 }

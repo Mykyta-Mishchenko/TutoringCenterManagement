@@ -1,0 +1,33 @@
+<div class="card-box">
+    <div id="profile">
+        <div id="cardImgBox">
+            <img [src]="teacher().profileImgUrl || 'empty-profile.png'" class="profile-img mt-3 mb-3">
+        </div>
+        <div class="card-body" id="cardBody">
+            <h5 clas="card-title">
+                {{ teacher().fullName }}
+            </h5>
+            <div class="subject-list">
+                <div class="subject subject-header">
+                    <div class="subject-name">
+                        Subjects:
+                    </div>
+                    <div class="subject-class">
+                        Classes:
+                    </div>
+                </div>
+                @for(subject of uniqueSubjects(); track subject.name){
+                    <div class="subject">
+                        <div class="subject-name">
+                            {{ subject.name }}
+                        </div>
+                        <div class="subject-class">
+                            {{ getSubjectMinMaxYear(subject) }}
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="btn btn-outline-success btn-bottom"> Sign up for classes </button>
+        </div>
+    </div>
+</div>

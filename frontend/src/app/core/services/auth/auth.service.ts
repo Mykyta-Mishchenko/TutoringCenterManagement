@@ -31,7 +31,6 @@ export class AuthService{
   updateUserByToken(accessToken: string | null) {
     this.user.update(user => {
       const updatedUser = this.getUserFromToken(accessToken);
-      console.log(updatedUser);
       return { ...updatedUser, profileImgUrl: user?.profileImgUrl } as User;
   });
   }
@@ -40,12 +39,9 @@ export class AuthService{
     this.profileSevice.getUserProfile(this.user()!.userId).subscribe({
       next:(imageUrl) => {
         this.user.update(user => user ? { ...user, profileImgUrl: imageUrl } : null);
-        console.log("img path:" + this.User()?.profileImgUrl);
       },
       error: (err) => {
         this.user.update(user => user ? { ...user, profileImgUrl: null } : null);
-        console.log("img path is empty");
-        console.log(this.User());
       }
     })
   }

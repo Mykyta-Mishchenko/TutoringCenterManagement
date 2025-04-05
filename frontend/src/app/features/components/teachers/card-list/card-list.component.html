@@ -1,0 +1,5 @@
+<div id="teachersDashboard">
+    @for(teacher of teachers(); track teacher.id){
+        <app-teacher-card [teacher]="teacher" ></app-teacher-card>
+    }
+</div>

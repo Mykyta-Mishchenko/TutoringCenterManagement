@@ -1,0 +1,22 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-end">
+            <div class="switcher-container">
+                <label class="switcher">
+                  <input type="checkbox" 
+                         (change)="onSwitcherChange($event)" 
+                         [checked]="!isStandartView()">
+                  <span class="slider round">
+                    <span class="slider-text">{{ viewName() }}</span>
+                  </span>
+                </label>
+              </div>
+        </div>
+        @if(isStandartView()){
+            <app-card-list [teachers]="teachers()"></app-card-list>
+        }
+        @else {
+          <app-table-list [teachers]="teachers()"></app-table-list>
+        }
+    </div>
+</div>
