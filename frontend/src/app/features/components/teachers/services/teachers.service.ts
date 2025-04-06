@@ -1,12 +1,28 @@
 import { Injectable, signal } from "@angular/core";
 import { Teacher } from "../../../../shared/models/teacher.model";
+import { Subject } from "../../../../shared/models/subject.model";
 
 @Injectable({
     providedIn: 'root'
 })
 export class TeachersService {
-    teachersList = signal<Teacher[]>(SAMPLE_TEACHERS_LIST);
+  teachersList = signal<Teacher[]>(SAMPLE_TEACHERS_LIST);
+  
+  subjects = signal<Subject[]>(SAMPLE_SUBJECTS);
 }
+
+const SAMPLE_SUBJECTS: Subject[] = [
+  { subjectId: 1, name: 'Mathematics' , classYear: 1},
+  { subjectId: 2, name: 'Science', classYear: 1 },
+  { subjectId: 3, name: 'History', classYear: 1 },
+  { subjectId: 4, name: 'Literature', classYear: 1 },
+  { subjectId: 5, name: 'Computer Science', classYear: 1 },
+  { subjectId: 6, name: 'Physics', classYear: 1 },
+  { subjectId: 7, name: 'Chemistry', classYear: 1 },
+  { subjectId: 8, name: 'Biology', classYear: 1 },
+  { subjectId: 9, name: 'Geography', classYear: 1 },
+  { subjectId: 10, name: 'Art', classYear: 1 }
+]
 
 const SAMPLE_TEACHERS_LIST: Teacher[] = [
   {

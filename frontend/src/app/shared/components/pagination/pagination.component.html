@@ -1,0 +1,8 @@
+<div>
+    <button class="btn btn-small btn-info" (click)="onPrev()" [disabled]="page()===1">Previous</button>
+    <button class="btn btn-small btn-info" 
+        *ngFor="let pageNum of getPages()" 
+        (click)="onPage(pageNum)"
+        [ngClass]="{'active': pageNum === page(), 'disabled':pageNum !== page()}">{{ pageNum }}</button>
+    <button class="btn btn-small btn-info" (click)="onNext()" [disabled]="isLastPage()">Next</button>
+</div>

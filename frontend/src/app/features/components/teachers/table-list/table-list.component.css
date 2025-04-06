@@ -39,7 +39,11 @@
 
 .table-container{
     overflow-y: scroll;
-    max-height: 85vh;
+    max-height: 78vh;
+}
+
+table thead {
+    user-select: none;
 }
 
 table tbody td, table thead th {
@@ -54,10 +58,4 @@ table tbody td, table thead th {
 .subject-header{
     font-weight: 600;
     font-size: 16px;
-}
-.subject-class{
-    
-}
-.subject-name{
-
 }

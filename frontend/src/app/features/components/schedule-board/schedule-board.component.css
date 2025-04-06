@@ -1,0 +1,43 @@
+.board-container{
+    background-color: #ffffff;
+    border-radius: 1rem;
+    display: flex;
+    max-height: 80vh;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.2);
+    overflow: hidden;
+    padding: 0.7rem;
+}
+
+.ten-minutes-line{
+    border-bottom: 1px solid #989898;
+    min-height: 1.3rem;
+}
+
+.one-hour-line{
+    border-bottom: 2px solid #5e5e5e; 
+}
+
+#board{
+    width:100%;
+    position: relative;
+    overflow-y: scroll;
+}
+
+.header-text{
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight:500;
+}
+
+.day-line{
+    grid-row: 1 / -1;
+    border-left: 1px solid #5e5e5e;
+}
+
+.time-label {
+    position: absolute;
+    font-size: 0.8rem;
+    color: #555;
+    z-index: 3;
+    pointer-events: none;
+}

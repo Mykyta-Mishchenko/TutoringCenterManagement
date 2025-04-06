@@ -3,11 +3,12 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 import { NgClass, NgIf } from '@angular/common';
 import { ProfileService } from '../../../shared/services/profile.service';
 import { ImgProfileService } from '../../services/img-profile.service';
+import { ScheduleBoardComponent } from "../schedule-board/schedule-board.component";
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [NgClass, NgIf],
+  imports: [NgClass, NgIf, ScheduleBoardComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
