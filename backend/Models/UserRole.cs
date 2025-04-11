@@ -5,8 +5,8 @@ namespace backend.Models
     public enum UserRole
     {
         [EnumMember(Value = "student")]
-        student,
+        student = 1,
         [EnumMember(Value = "teacher")]
-        teacher
+        teacher = 2
     }
 }

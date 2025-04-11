@@ -17,5 +17,7 @@ namespace backend.Data.DataModels
         public UserProfile UserProfile { get; set; }
         public ICollection<UserRoles> UserRoles { get; set; }
         public ICollection<RefreshSession> Sessions { get; set; }
+        public ICollection<TeacherLesson> TeacherLessons { get; set; }
+        public ICollection<StudentLesson> StudentLessons { get; set; }
     }
 }

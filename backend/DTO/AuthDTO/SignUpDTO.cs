@@ -1,6 +1,4 @@
-﻿using backend.Data.DataModels;
-using backend.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using backend.Models;
 using System.Text.Json.Serialization;
 
 namespace backend.DTO.AuthDTO

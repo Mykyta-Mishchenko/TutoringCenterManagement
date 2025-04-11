@@ -1,13 +1,10 @@
-using FluentValidation.AspNetCore;
-using FluentValidation;
 using JwtBackend.Data;
 using Microsoft.EntityFrameworkCore;
-using JwtBackend.Validators;
 using JwtBackend.Extensions;
 using JwtBackend.Mapping;
-using backend.DTO;
-using backend.Validators;
 using backend.Extensions;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +25,11 @@ builder.Services.AddCors(opts =>
     });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+});
 
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();

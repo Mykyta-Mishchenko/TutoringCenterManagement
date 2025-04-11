@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
 using backend.Data.DataModels;
-using backend.DTO;
 using backend.DTO.AuthDTO;
 using backend.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
 
 namespace JwtBackend.Controllers
 {

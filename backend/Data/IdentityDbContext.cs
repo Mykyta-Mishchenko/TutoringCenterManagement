@@ -13,6 +13,11 @@ namespace JwtBackend.Data
         public DbSet<UserRoles> UsersRoles { get; set; }
         public DbSet<UserProfile> UsersProfile { get; set; }
         public DbSet<RefreshSession> RefreshSessions { get; set; }
+        public DbSet<TeacherLesson> TeacherLessons { get; set; }
+        public DbSet<StudentLesson> StudentLessons { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<LessonType> LessonTypes { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

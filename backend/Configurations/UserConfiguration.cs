@@ -40,6 +40,16 @@ namespace JwtBackend.Configurations
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(u => u.TeacherLessons)
+                .WithOne(u => u.User)
+                .HasForeignKey(l => l.TeacherId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(u => u.StudentLessons)
+                .WithOne(u => u.User)
+                .HasForeignKey(l => l.StudentId)
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder.ToTable("Users");
         }
     }
