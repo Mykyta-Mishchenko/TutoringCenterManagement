@@ -24,7 +24,7 @@ export class ProfileService {
         );
     }
 
-    setUserProfile(formData: FormData) {
+    setUserProfile(formData: FormData) : Observable<any>{
         return this.httpClient.post(`${this.apiUrl}/profile/upload`, formData, {
           withCredentials: true
         });

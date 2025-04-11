@@ -1,0 +1,30 @@
+<div class="card-container" (click)="onClick()"
+    [class.bg-light-green]="!isLessonFull()"
+    [class.bg-light-blue]="isLessonFull()"
+    [class.active-card]="isCardActive()"
+    [class.deactive-card]="!isCardActive()">
+    <div class="schedule-card">
+        <div class="count-style bold-text"
+            [class.full-tooked]="isLessonFull()"
+            [class.gaining]="!isLessonFull()">
+            {{lesson().studentsCount}} / {{lesson().type.maxStudentsCount}}
+        </div>
+        <div class="info-container">
+            <div class="bold-text header-style">
+                {{lesson().type.subject.name}}
+            </div>
+            <div class="mt-2">
+               <span class="bold-text">Year: </span> {{lesson().type.schoolYear}}
+            </div>
+            <div>
+                <span class="bold-text">Time: </span> {{lesson().schedule.dayTime | date: 'HH:mm'}}
+            </div>
+            <div>
+                <span class="bold-text">Students: </span> {{lesson().studentsCount}}
+            </div>
+            <div>
+                <span class="bold-text">Price: </span> {{lessonPrice()}} @if(isTeacher()){ / {{lesson().type.price}} } 
+            </div>
+        </div>
+    </div>
+</div>

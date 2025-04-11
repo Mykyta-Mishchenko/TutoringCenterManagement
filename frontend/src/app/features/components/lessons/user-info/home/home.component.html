@@ -1,0 +1,8 @@
+<div class="row">
+    <div class="col-md-9" id="schedule-board">
+        <app-schedule-board [userId]="selectedUserId()" [isOnOwnPage]="isOnOwnPage()"></app-schedule-board>
+    </div>
+    <div class="col-md-3" id="profile-board">
+        <app-profile [selectedUserId]="selectedUserId()" [isOnOwnPage]="isOnOwnPage()"></app-profile>
+    </div>
+</div>

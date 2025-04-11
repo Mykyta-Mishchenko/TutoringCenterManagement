@@ -1,8 +1,8 @@
-import { Subject } from "./subject.model";
+import { Lesson } from "./lesson.model";
 
 export interface Teacher{
     id: number;
     fullName: string;
-    subjects: Subject[];
+    lessons: Lesson[];
     profileImgUrl: string | null;
 }

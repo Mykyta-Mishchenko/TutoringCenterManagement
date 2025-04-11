@@ -1,48 +1,25 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Teacher } from '../../../../shared/models/teacher.model';
 import { Subject } from '../../../../shared/models/subject.model';
+import { SubjectInfoService } from '../../../services/subject-info.service.ts.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-table-list',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './table-list.component.html',
   styleUrl: './table-list.component.css'
 })
 export class TableListComponent {
+  private subjectInfoService = inject(SubjectInfoService);
   teachers = input.required<Teacher[]>()
 
-  getUniqueSubjects(teacher: Teacher) {
-    const subjects = teacher.subjects;
-    return Array.from(
-      new Map(subjects.map(subject => [subject.name, subject])).values()
-    );
+  getUniqueSubjects(teacher: Teacher): Subject[] {
+    return this.subjectInfoService.getUniqueSubjects(teacher.lessons);
   }
-  
-    getSubjectMinMaxYear(teacher: Teacher, targetSubject: Subject) {
-      const minYear = teacher.subjects
-        .filter(subject => subject.name === targetSubject.name)
-        .reduce((min, current) => 
-          current.classYear < min ? current.classYear : min, 
-          Infinity
-      );
-      
-      const maxYear = teacher.subjects
-      .filter(subject => subject.name === targetSubject.name)
-      .reduce((max, current) => 
-        current.classYear > max ? current.classYear : max, 
-        0
-      );
-  
-      let minMaxYearString = "";
-  
-      if (minYear === maxYear) {
-        minMaxYearString = minYear.toString();
-      }
-      else {
-        minMaxYearString = minYear + " - " + maxYear;
-      }
-  
-      return minMaxYearString;
-    }
+
+  getSubjectMinMaxYear(teacher: Teacher, subject: Subject) {
+    return this.subjectInfoService.getSubjectMinMaxYear(teacher.lessons, subject);
+  }
 }

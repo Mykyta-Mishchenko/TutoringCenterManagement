@@ -1,6 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { ProfileService } from "../../shared/services/profile.service";
 import { AuthService } from "../../core/services/auth/auth.service";
+import { Observable, throwError } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -33,20 +34,12 @@ export class ImgProfileService{
         return { isValid: true };
       }
     
-      uploadFile(selectedFile: File | null) {
-        if (!selectedFile) return;
+      uploadFile(selectedFile: File | null): Observable<any> {
+        if (!selectedFile) return throwError(() => new Error('No file selected.'));;
       
         const formData = new FormData();
         formData.append('profileImg', selectedFile);
       
-        this.profileService.setUserProfile(formData).subscribe({
-          next: (response) => {
-                console.log('Upload successful:', response);
-                this.authService.setUserProfile();
-          },
-          error: (error) => {
-            console.error('Upload failed:', error);
-          }
-        });
+        return this.profileService.setUserProfile(formData);
       }
 }

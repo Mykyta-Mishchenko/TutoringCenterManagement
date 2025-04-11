@@ -1,0 +1,72 @@
+.card-container{
+    display:flex;
+    border-radius: 0.8rem;
+    height: 100%;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.2);
+    margin-left: 1px;
+    overflow: hidden;
+    min-width: 11rem;
+}
+
+.active-card{
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.active-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+}
+
+.active-card:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.schedule-card{
+    display: flex;
+    flex-direction: row;
+}
+
+deactive-card{
+    user-select: none;
+    pointer-events: none;
+}
+
+.count-style{
+    padding: 0.3rem;
+    text-align: center;
+}
+
+.info-container{
+    display: flex;
+    flex-direction: column;
+    padding:0.2rem;
+    padding-left: 0.5rem;
+}
+
+.bg-light-green{
+    background-color: #D2DE32;
+}
+
+.bg-light-blue{
+    background-color: #AFDDFF;
+}
+
+.full-tooked{
+    background-color: #279EFF;
+}
+
+.gaining{
+    background-color: #5CB338;
+}
+
+.bold-text{
+    font-size: 1rem;
+    font-weight: bold;
+    color: #000;
+}
+
+.header-style{
+    text-decoration-line: underline;
+}

@@ -3,7 +3,7 @@
         <a class="nav-link" routerLink="">Our Teachers</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" routerLink="/profile">User Profile</a>
+        <a class="nav-link" routerLink="/profile" [queryParams]="{userId: userId}">{{userRole()}} Profile</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" routerLink="/schedule/student">Student Schedule</a>

@@ -25,3 +25,20 @@ body{
     scrollbar-width: none;
     overflow: hidden;
 }
+.subject-list{
+    display: flex;
+    flex-direction: column;
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+}
+
+.subject{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.2rem;
+}
+
+.subject-header{
+    font-weight: 600;
+    font-size: 16px;
+}

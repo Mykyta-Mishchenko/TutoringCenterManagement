@@ -1,0 +1,164 @@
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="show()" style="background-color: rgba(0,0,0,0.5);"
+  (click)="closeModal()">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          @if(isEditing()){Edit lesson}
+          @else{Create lesson}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="boxed-form" [formGroup]="form()" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="subject">Subject:</label>
+          <select
+            id="subject"
+            class="form-control"
+            formControlName="subject"
+            [class.is-valid]="subjectIsValid && form().controls.subject.touched"
+            [class.is-invalid]="!subjectIsValid && form().controls.subject.touched"
+                    >
+            @for(subject of subjects; track subject.subjectId){
+              <option [value]="subject.subjectId">{{subject.name}}</option>
+            }
+          </select>
+          @if(!subjectIsValid && form().controls.subject.touched){
+            <div *ngIf="form().controls.subject.hasError('required')" class="invalid-feedback">
+                Please provide subject.
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <label for="schoolYear">School year:</label>
+          <select
+            id="schoolYear"
+            class="form-control"
+            formControlName="schoolYear"
+            [class.is-valid]="schoolYearIsValid && form().controls.schoolYear.touched"
+            [class.is-invalid]="!schoolYearIsValid && form().controls.schoolYear.touched"
+                    >
+            @for(num of getRange(1, 12); track num){
+              <option [value]="num">{{num}}</option>
+            }
+          </select>
+          @if(!schoolYearIsValid && form().controls.schoolYear.touched){
+            <div class="invalid-feedback">
+                Please provide correct school year.
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <label for="studentmaxStudentsCountsCount">Max students count:</label>
+          <select
+            id="maxStudentsCount"
+            class="form-control"
+            formControlName="maxStudentsCount"
+            [class.is-valid]="maxStudentsCountIsValid && form().controls.maxStudentsCount.touched"
+            [class.is-invalid]="!maxStudentsCountIsValid && form().controls.maxStudentsCount.touched"
+                    >
+            @for(num of getRange(1, 5); track num){
+              <option [value]="num">{{num}}</option>
+            }
+          </select>
+          @if(!maxStudentsCountIsValid && form().controls.maxStudentsCount.touched){
+            <div class="invalid-feedback">
+                Please provide correct max students count.
+            </div>
+          }
+        </div>
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="day">Day:</label>
+            <select
+              id="day"
+              class="form-control"
+              formControlName="day"
+              [class.is-valid]="dayIsValid && form().controls.day.touched"
+              [class.is-invalid]="!dayIsValid && form().controls.day.touched"
+                      >
+              @for(num of getRange(1, 7); track num){
+                <option [value]="num">{{days[num-1]}}</option>
+              }
+            </select>
+            @if(!dayIsValid && form().controls.day.touched && timeIsValid){
+              <div class="invalid-feedback">
+                  Please provide correct day.
+              </div>
+            }
+          </div>
+          <div class="form-group col">
+            <label for="hour">Hour:</label>
+            <select
+              id="hour"
+              class="form-control"
+              formControlName="hour"
+              [class.is-valid]="hourIsValid && form().controls.hour.touched"
+              [class.is-invalid]="!hourIsValid && form().controls.hour.touched"
+                      >
+              @for(num of getRange(8, 20); track num){
+                <option [value]="num">{{num}}</option>
+              }
+            </select>
+            @if(!hourIsValid && form().controls.hour.touched && timeIsValid){
+              <div class="invalid-feedback">
+                  Please provide correct hour.
+              </div>
+            }
+          </div>
+          <div class="form-group col">
+            <label for="minutes">Minutes:</label>
+            <select
+              id="minutes"
+              class="form-control"
+              formControlName="minutes"
+              [class.is-valid]="minutesIsValid && form().controls.minutes.touched"
+              [class.is-invalid]="!minutesIsValid && form().controls.minutes.touched">
+              @for(num of getRange(0, 55, 5); track num){
+                <option [value]="num">{{num}}</option>
+              }
+            </select>
+            @if(!minutesIsValid && form().controls.minutes.touched && timeIsValid){
+              <div class="invalid-feedback">
+                  Please provide correct minutes.
+              </div>
+            }
+          </div>
+        </div>
+        <div class="form-group">
+          <input type="hidden" class="is-invalid" />
+          @if(!timeIsValid && form().controls.day.touched 
+            && form().controls.hour.touched
+            && form().controls.minutes.touched){
+            <div class="invalid-feedback">
+              The selected lesson time conflicts with another lesson.
+            </div>
+          }
+        </div>
+        <div class="form-group">
+          <label for="price">Price: </label>
+          <input 
+              type="text" 
+              class="form-control" 
+              [class.is-valid]="priceIsValid"
+              [class.is-invalid]="!priceIsValid && form().controls.price.touched"
+              id="price" 
+              formControlName="price">
+              @if(!priceIsValid && form().controls.price.touched){
+                  <div class="invalid-feedback">
+                      Please provide correct price. It's should be in range 0 to 1000 and must be divided into 5 and max students count!
+                  </div>
+              }
+        </div>
+        <div class="form-row d-flex justify-content-end">
+          <button type="submit" class="btn btn-outline-success mt-2 btn-edit">
+            @if(isEditing()){Edit}
+            @else {Create}
+          </button>
+      </div>
+      </form>
+    </div>  
+  </div>
+</div>

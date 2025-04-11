@@ -1,0 +1,27 @@
+.profile-img{
+    border: 1px solid #000000;
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-color: #ffffff;
+}
+.profile-box{
+    display: flex;
+    justify-content: center;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+.img-box{
+    width: 90%;
+    aspect-ratio: 1 / 1;
+}
+.empty-profile-img{
+    background-color: #FFC107;
+}
+.filled-profile-img{
+    background-color: #5CB338;
+}
+.btn-full{
+    width: 100%;
+}

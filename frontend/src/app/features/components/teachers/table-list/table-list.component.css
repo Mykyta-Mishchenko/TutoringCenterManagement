@@ -49,13 +49,3 @@ table thead {
 table tbody td, table thead th {
     border: 2px solid #929292;
 }
-.subject{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 0.2rem;
-}
-
-.subject-header{
-    font-weight: 600;
-    font-size: 16px;
-}

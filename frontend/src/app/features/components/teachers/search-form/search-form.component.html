@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+        <div class="input-group mb-3 col-6">
+            <div class="input-group-prepend">
+                <span class="input-group-text bg-white">
+                  <i class="bi bi-search"></i>
+                </span>
+            </div>
+            <input type="text" id="name" formControlName="name" class="form-control" placeholder="Username" aria-label="Username" >
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </div>
+        <div class="form-group col">
+            <select id="subjectId" formControlName="subjectId" class="form-control">
+              <option value="">Select subject</option>
+                @for(subject of subjects(); track subject.subjectId){
+                  <option [value]="subject.subjectId">{{subject.name}}</option>
+                }
+            </select>
+        </div>
+        <div class="form-group col">
+          <select id="schoolYear" formControlName="schoolYear" class="form-control">
+            <option value="">Select year</option>
+            @for(num of getRange(1, 12); track num) {
+              <option [value]="num">{{num}}</option>
+            }
+          </select>
+        </div>
+    </div>
+</form>

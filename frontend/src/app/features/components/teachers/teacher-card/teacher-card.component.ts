@@ -1,49 +1,27 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Teacher } from '../../../../shared/models/teacher.model';
 import { Subject } from '../../../../shared/models/subject.model';
+import { SubjectInfoService } from '../../../services/subject-info.service.ts.service';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-teacher-card',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './teacher-card.component.html',
   styleUrl: './teacher-card.component.css'
 })
 export class TeacherCardComponent {
+
+  private subjectInfoService = inject(SubjectInfoService);
   teacher = input.required<Teacher>();
 
-  readonly uniqueSubjects = computed(() => {
-    const subjects = this.teacher().subjects;
-    return Array.from(
-      new Map(subjects.map(subject => [subject.name, subject])).values()
-    );
-  });
+  getUniqueSubjects(): Subject[] {
+    return this.subjectInfoService.getUniqueSubjects(this.teacher().lessons);
+  }
 
-  getSubjectMinMaxYear(targetSubject: Subject) {
-    const minYear = this.teacher().subjects
-      .filter(subject => subject.name === targetSubject.name)
-      .reduce((min, current) => 
-        current.classYear < min ? current.classYear : min, 
-        Infinity
-    );
-    
-    const maxYear = this.teacher().subjects
-    .filter(subject => subject.name === targetSubject.name)
-    .reduce((max, current) => 
-      current.classYear > max ? current.classYear : max, 
-      0
-    );
-
-    let minMaxYearString = "";
-
-    if (minYear === maxYear) {
-      minMaxYearString = minYear.toString();
-    }
-    else {
-      minMaxYearString = minYear + " - " + maxYear;
-    }
-
-    return minMaxYearString;
+  getSubjectMinMaxYear(subject: Subject) {
+    return this.subjectInfoService.getSubjectMinMaxYear(this.teacher().lessons, subject);
   }
 }

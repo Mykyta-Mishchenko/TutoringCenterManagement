@@ -16,7 +16,7 @@
                         Classes:
                     </div>
                 </div>
-                @for(subject of uniqueSubjects(); track subject.name){
+                @for(subject of getUniqueSubjects(); track subject.name){
                     <div class="subject">
                         <div class="subject-name">
                             {{ subject.name }}
@@ -27,7 +27,9 @@
                     </div>
                 }
             </div>
-            <button class="btn btn-outline-success btn-bottom"> Sign up for classes </button>
+            <button class="btn btn-outline-success btn-bottom" routerLink="profile" [queryParams]="{userId: teacher().id}"> 
+                Sign up for classes 
+            </button>
         </div>
     </div>
 </div>

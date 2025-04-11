@@ -1,0 +1,22 @@
+<div class="profile-info">
+    <div class="subject-list">
+        <div class="subject subject-header">
+            <div class="subject-name">
+                Subjects:
+            </div>
+            <div class="subject-class">
+                Classes:
+            </div>
+        </div>
+        @for(subject of getUniqueSubjects(); track subject.name){
+            <div class="subject">
+                <div class="subject-name">
+                    {{ subject.name }}
+                </div>
+                <div class="subject-class">
+                    {{ getSubjectMinMaxYear(subject) }}
+                </div>
+            </div>
+        }
+    </div>
+</div>

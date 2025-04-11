@@ -1,0 +1,39 @@
+import { Component, computed, inject, input, output } from '@angular/core';
+import { BoardService } from '../../../services/board.service';
+import { LessonService } from '../../../services/lesson.service';
+import { DatePipe, NgIf } from '@angular/common';
+import { Lesson } from '../../../../shared/models/lesson.model';
+
+@Component({
+  selector: 'app-card-unsubscribe-popup',
+  standalone: true,
+  imports: [NgIf, DatePipe],
+  templateUrl: './card-unsubscribe-popup.component.html',
+  styleUrl: './card-unsubscribe-popup.component.css'
+})
+export class CardUnsubscribePopupComponent {
+
+  private lessonService = inject(LessonService);
+
+  show = input.required<boolean>();
+  lesson = input.required<Lesson | null>();
+  close = output();
+
+  lessonPrice = computed(() => {
+      const lessonPrice = this.lesson()!.type.price / this.lesson()!.type.maxStudentsCount; 
+      const roundedPrice = Math.floor(lessonPrice / 5) * 5;
+      return roundedPrice;
+    });
+
+  closeModal() {
+    this.close.emit();
+  }
+
+  unsubscribe() {
+    if (this.lesson()?.lessonId) {
+      this.lessonService.unsubscribeLesson(this.lesson()!.lessonId);
+      this.close.emit();
+    }
+  }
+
+}

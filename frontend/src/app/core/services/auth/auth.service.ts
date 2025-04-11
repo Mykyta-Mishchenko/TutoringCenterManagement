@@ -28,6 +28,8 @@ export class AuthService{
 
   isLoggedIn = computed(() => this.ACCESS_TOKEN() !== null);
 
+  isTeacher = computed(() => this.user()?.role === 'teacher');
+
   updateUserByToken(accessToken: string | null) {
     this.user.update(user => {
       const updatedUser = this.getUserFromToken(accessToken);
@@ -90,12 +92,13 @@ export class AuthService{
     if (!token) return null;
         
     try {
-      const payload:any = jwtDecode(token);
+      const payload: any = jwtDecode(token);
 
       return {
         userId: payload.sid!,
         username: payload.unique_name + " " + payload.family_name,
         email: payload.email,
+        role: payload.role,
         profileImgUrl: null
       }
     } catch (error) {

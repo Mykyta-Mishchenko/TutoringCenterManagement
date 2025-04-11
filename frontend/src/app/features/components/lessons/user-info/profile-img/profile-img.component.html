@@ -1,0 +1,12 @@
+<div class="profile-box" [ngClass]="isProfileImgEmpty() ? 'empty-profile-img': 'filled-profile-img'">
+    <div class="img-box">
+        <img [src]="profileImgUrl()" class="profile-img mt-3 mb-3">
+    </div>
+</div>
+@if(isOnOwnPage()){
+    <button class="btn btn-outline-primary btn-full" (click)="triggerFileInput()">Upload profile img</button>
+    <input type="file" id="fileInput" (change)="onFileSelected($event)" style="display: none;">
+    <div *ngIf="errorMessage" class="alert alert-danger mt-2">
+        {{ errorMessage }}
+    </div>
+}

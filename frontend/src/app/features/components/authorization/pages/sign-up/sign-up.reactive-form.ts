@@ -1,4 +1,5 @@
 import { AbstractControl, FormControl, FormGroup, Validators } from "@angular/forms";
+import { Roles } from "../../../../../shared/models/roles.enum";
 
 interface FormModel {
   firstName: FormControl<string>;
@@ -8,7 +9,7 @@ interface FormModel {
     password: FormControl<string>;
     confirmedPassword: FormControl<string>;
   }>;
-  role: FormControl<'student' | 'teacher'>;
+  role: FormControl<Roles>;
 }
 
 export const form: FormGroup<FormModel> = new FormGroup<FormModel>({
@@ -37,7 +38,7 @@ export const form: FormGroup<FormModel> = new FormGroup<FormModel>({
   {
     validators: [equalPasswords]
   }),
-  role: new FormControl<'student' | 'teacher'>('student', {
+  role: new FormControl<Roles>(Roles.Student, {
     nonNullable: true,
     validators: [Validators.required]
   })

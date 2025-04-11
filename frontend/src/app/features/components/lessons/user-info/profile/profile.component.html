@@ -1,0 +1,25 @@
+<div class="card" id="profile">
+    <app-profile-img [userId]="selectedUserId()" [isOnOwnPage]="isOnOwnPage()"></app-profile-img>
+    <div class="card-body text-center">
+        <h5 clas="card-title">
+            {{ selectedUser()?.username }}
+        </h5>
+        <p class="card-text">
+            <app-profile-info [userId]="selectedUser()!.userId"></app-profile-info>
+            @if(isOnOwnPage()){
+                <button class="btn btn-success" (click)="onAddNewLesson()" *hasRole="'teacher'">Add new lesson</button>
+            }
+        </p>
+    </div>
+</div>
+
+@if(isOnOwnPage()){
+    <div *hasRole="'teacher'">
+        <app-card-editing-popup
+        [lesson]="null"
+        [show]="isModalVisible()"
+        [state]="modalState()"
+        (close)="onModalClose()"
+        (update)="onUpdate()"></app-card-editing-popup>
+    </div>
+}

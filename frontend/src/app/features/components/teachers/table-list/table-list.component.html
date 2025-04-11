@@ -42,7 +42,9 @@
                         </div>
                     </td>
                     <td class="align-middle">
-                        <button class="btn btn-outline-success btn-bottom"> Sign up for classes </button>
+                        <button class="btn btn-outline-success btn-bottom" routerLink="profile" [queryParams]="{userId: teacher.id}"> 
+                            Sign up for classes 
+                        </button>
                     </td>
                 </tr>
             }

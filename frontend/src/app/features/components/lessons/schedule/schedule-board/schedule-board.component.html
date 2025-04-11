@@ -1,0 +1,30 @@
+<div class="board-container">
+    <div id="board"></div>
+</div>
+
+@if(isOnOwnPage()){
+  <div *hasRole="'teacher'">
+    <app-card-editing-popup
+    [lesson]="selectedLesson()"
+    [show]="isModalVisible()" 
+    [state]="modalState()"
+    (close)="onModalClose()"
+    (update)="onUpdate()"></app-card-editing-popup>
+  </div>
+
+  <div *hasRole="'student'">
+    <app-card-unsubscribe-popup
+      [show]="isModalVisible()"
+      [lesson]="selectedLesson()"
+      (close)="onModalClose()"
+    ></app-card-unsubscribe-popup>
+  </div>
+}
+@else {
+  <div *hasRole="'student'">
+    <app-card-subscribe-popup
+      [show]="isModalVisible()"
+      [lesson]="selectedLesson()"
+      (close)="onModalClose()"></app-card-subscribe-popup>
+  </div>
+}

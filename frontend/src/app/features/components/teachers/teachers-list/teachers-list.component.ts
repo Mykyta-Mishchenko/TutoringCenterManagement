@@ -1,46 +1,40 @@
-import { Component, computed, inject, OnInit, Signal, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal} from '@angular/core';
 import { Teacher } from '../../../../shared/models/teacher.model';
-import { TeachersService } from '../services/teachers.service';
 import { CardListComponent } from "../card-list/card-list.component";
 import { TableListComponent } from "../table-list/table-list.component";
 import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
-
-const SAMPLE_TEACHERS_LIST: Teacher[] = [
-  
-]
+import { UsersService } from '../../../services/users.service';
+import { Roles } from '../../../../shared/models/roles.enum';
+import { UsersFilter } from '../../../../shared/models/dto/users-filter.dto';
+import { SearchFormComponent } from "../search-form/search-form.component";
 
 @Component({
   selector: 'app-teachers-list',
   standalone: true,
-  imports: [CardListComponent, TableListComponent, PaginationComponent],
+  imports: [CardListComponent, TableListComponent, PaginationComponent, SearchFormComponent],
   templateUrl: './teachers-list.component.html',
   styleUrl: './teachers-list.component.css'
 })
 export class TeachersListComponent implements OnInit {
-  
-  private teachersService = inject(TeachersService);
 
-  teachers!: Signal<Teacher[]>;
+  private usersService = inject(UsersService);
+
+  teachers!: Teacher[];
   isStandartView = signal<boolean>(true);
   viewName = computed(() => this.isStandartView() ? "cards" : "table");
+  filter = signal<UsersFilter>(this.usersService.BasicTeachersFilter);
 
-  subjects = this.teachersService.subjects;
-
-  total = 10;
-  page = 1;
-  limit = 1;
+  total = signal<number>(10);
+  page = signal<number>(1);
+  limit = signal<number>(1);
   loading = false;
 
   ngOnInit(): void {
-    this.getTeachers();
+    this.getTeachers(this.filter());
   }
 
-  getRange(start: number, end: number): number[] {
-    return Array(end - start + 1).fill(0).map((_, idx) => start + idx);
-  }
-
-  getTeachers() {
-    this.teachers = this.teachersService.teachersList;
+  getTeachers(filter: UsersFilter) {
+    this.teachers = this.usersService.getUsersByFilter(filter);
   }
 
   onSwitcherChange(event: Event) {
@@ -49,16 +43,26 @@ export class TeachersListComponent implements OnInit {
   }
 
   goToPrevious() {
-    this.page--;
-    this.getTeachers();
+    this.page.set(this.page() - 1);
+    this.getTeachers(this.filter());
   }
 
   goToNext() {
-    this.getTeachers();
+    this.page.set(this.page() + 1);
+    this.getTeachers(this.filter());
   }
 
   goToPage(n: number) {
-    this.page = n;
-    this.getTeachers();
+    this.page.set(n);
+    this.filter.update(current => ({
+      ...current,
+      page: n
+    }));
+    this.getTeachers(this.filter());
+  }
+
+  onFilter(filter: UsersFilter) {
+    this.filter.set(filter);
+    this.getTeachers(filter)
   }
 }
