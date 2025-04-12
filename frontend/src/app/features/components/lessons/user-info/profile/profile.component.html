@@ -1,11 +1,11 @@
 <div class="card" id="profile">
-    <app-profile-img [userId]="selectedUserId()" [isOnOwnPage]="isOnOwnPage()"></app-profile-img>
+    <app-profile-img [userId]="selectedUser()?.userId" [isOnOwnPage]="isOnOwnPage()"></app-profile-img>
     <div class="card-body text-center">
         <h5 clas="card-title">
-            {{ selectedUser()?.username }}
+            {{ selectedUser()?.fullName }}
         </h5>
         <p class="card-text">
-            <app-profile-info [userId]="selectedUser()!.userId"></app-profile-info>
+            <app-profile-info [subjects]="selectedUser()?.subjects"></app-profile-info>
             @if(isOnOwnPage()){
                 <button class="btn btn-success" (click)="onAddNewLesson()" *hasRole="'teacher'">Add new lesson</button>
             }

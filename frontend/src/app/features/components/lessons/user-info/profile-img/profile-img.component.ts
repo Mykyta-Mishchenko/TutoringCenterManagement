@@ -17,7 +17,7 @@ export class ProfileImgComponent implements OnChanges {
   private profileService = inject(ProfileService);
   private imgProfileService = inject(ImgProfileService);
 
-  userId = input.required<number>();
+  userId = input.required<number | undefined>();
   isOnOwnPage = input.required<boolean>();
 
   profileImgUrl = signal<string>('empty-profile.png');
@@ -64,15 +64,17 @@ export class ProfileImgComponent implements OnChanges {
   }
 
   getProfileImgUrl() {
-    this.profileService.getUserProfile(this.userId()).subscribe(
-      {
-        next: (imgUrl) => {
-          this.profileImgUrl.set(imgUrl)
-        },
-        error: (err) => {
-          this.profileImgUrl.set('empty-profile.png');
+    if (this.userId()) {
+      this.profileService.getUserProfile(this.userId()!).subscribe(
+        {
+          next: (imgUrl) => {
+            this.profileImgUrl.set(imgUrl)
+          },
+          error: (err) => {
+            this.profileImgUrl.set('empty-profile.png');
+          }
         }
-      }
-    )
+      )
+    }
   }
 }

@@ -33,6 +33,7 @@ export class ScheduleBoardComponent implements OnChanges {
   userId = input.required<number>();
 
   isOnOwnPage = input.required<boolean>();
+  isOnTeacherPage = signal(false);
   isModalVisible = signal(false);
   selectedLesson = signal<Lesson | null>(null);
   modalState = signal<ModalState>(ModalState.Editing);
@@ -42,9 +43,14 @@ export class ScheduleBoardComponent implements OnChanges {
   ngOnChanges(): void {
     this.isModalVisible.set(false);
     this.boardService.loadUserLessons(this.userId());
-
     this.buildBoardGrid();
-    this.addLessonBoxes();
+
+    this.usersService.getUserRole(this.userId()).subscribe({
+      next: (role) => {
+        this.isOnTeacherPage.set(role === Roles.Teacher ? true : false);
+        this.addLessonBoxes();
+      }
+    });
   } 
 
   onModalClose() {
@@ -86,7 +92,7 @@ export class ScheduleBoardComponent implements OnChanges {
 
     //TODO with user service getUserRole: if student go on student page
     componentRef.setInput('currentUserRole', this.authService.isTeacher() ? Roles.Teacher : Roles.Student);
-    componentRef.setInput('isOnTeacherPage', this.usersService.getUserRole(this.userId()));
+    componentRef.setInput('isOnTeacherPage', this.isOnTeacherPage());
     componentRef.setInput('isOnOwnPage', this.isOnOwnPage());
     componentRef.instance.selectedLesson.subscribe(lesson => {
       this.startLessonEditing(lesson);

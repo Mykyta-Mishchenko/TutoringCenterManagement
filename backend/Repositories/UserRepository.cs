@@ -164,5 +164,24 @@ namespace JwtBackend.Repositories
             
             return new UsersListDTO() { TotalPageNumber = totalPages, UsersList = usersInfo };
         }
+
+        public async Task<UserInfoDTO> GetUserInfoAsync(int userId)
+        {
+            return await _identityDbContext.Users
+                .Where(u => u.UserId == userId)
+                .Select(u => new UserInfoDTO()
+                {
+                    UserId = userId,
+                    FullName = u.FirstName + " " + u.LastName,
+                    Subjects = u.TeacherLessons
+                        .GroupBy(l => l.LessonType.Subject.SubjectName)
+                        .Select(g => new SubjectInfoDTO()
+                        {
+                            Name = g.Key,
+                            MinSchoolYear = g.Min(l => l.LessonType.SchoolYear),
+                            MaxSchoolYear = g.Max(l => l.LessonType.SchoolYear)
+                        }).ToList()
+                }).FirstAsync();
+        }
     }
 }

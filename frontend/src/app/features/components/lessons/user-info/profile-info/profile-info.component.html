@@ -8,13 +8,13 @@
                 Classes:
             </div>
         </div>
-        @for(subject of getUniqueSubjects(); track subject.name){
+        @for(subject of subjects(); track subject.name){
             <div class="subject">
                 <div class="subject-name">
                     {{ subject.name }}
                 </div>
                 <div class="subject-class">
-                    {{ getSubjectMinMaxYear(subject) }}
+                    {{ subject.minSchoolYear }} - {{ subject.maxSchoolYear }}
                 </div>
             </div>
         }

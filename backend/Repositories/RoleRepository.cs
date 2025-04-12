@@ -52,6 +52,14 @@ namespace JwtBackend.Repositories
             return new List<Role>();
         }
 
+        public async Task<IList<Role>> GetUserRolesAsync(int userId)
+        {
+            return await _identityDbContext.UsersRoles
+                .Where(ur=>ur.UserId == userId)
+                .Select(ur=>ur.Role)
+                .ToListAsync();
+        }
+
         public async Task GiveUserRoleAsync(User user, string roleName)
         {
             var dbRole = await _identityDbContext.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
