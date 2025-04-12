@@ -5,6 +5,7 @@ using JwtBackend.Mapping;
 using backend.Extensions;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using backend.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +41,8 @@ builder.Services.AddApplicationServices();
 
 builder.Services.AddValidators();
 
-builder.Services.AddAutoMapper(typeof(UserProfile));
+builder.Services.AddAutoMapper(typeof(UserMappingProfile));
+builder.Services.AddAutoMapper(typeof(LessonMappingProfile));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -14,10 +14,10 @@
         <h5>Subscribe this lesson?</h5>
         <div class="info-container">
           <div class="bold-text header-style">
-              {{lesson()?.type?.subject?.name}}
+              {{lesson()?.lessonType?.subject?.name}}
           </div>
           <div class="mt-2">
-             <span class="bold-text">Year: </span> {{lesson()!.type.schoolYear}}
+             <span class="bold-text">Year: </span> {{lesson()!.lessonType.schoolYear}}
           </div>
           <div>
               <span class="bold-text">Time: </span> {{lesson()!.schedule.dayTime | date: 'HH:mm'}}

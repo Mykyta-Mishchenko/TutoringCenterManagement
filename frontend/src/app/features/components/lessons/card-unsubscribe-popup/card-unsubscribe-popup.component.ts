@@ -20,7 +20,7 @@ export class CardUnsubscribePopupComponent {
   close = output();
 
   lessonPrice = computed(() => {
-      const lessonPrice = this.lesson()!.type.price / this.lesson()!.type.maxStudentsCount; 
+      const lessonPrice = this.lesson()!.lessonType.price / this.lesson()!.lessonType.maxStudentsCount; 
       const roundedPrice = Math.floor(lessonPrice / 5) * 5;
       return roundedPrice;
     });

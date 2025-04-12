@@ -14,7 +14,12 @@
                     {{ subject.name }}
                 </div>
                 <div class="subject-class">
-                    {{ subject.minSchoolYear }} - {{ subject.maxSchoolYear }}
+                    @if(subject.minSchoolYear === subject.maxSchoolYear){
+                        {{ subject.minSchoolYear }}
+                    }
+                    @else {
+                        {{ subject.minSchoolYear }} - {{ subject.maxSchoolYear }}
+                    }
                 </div>
             </div>
         }

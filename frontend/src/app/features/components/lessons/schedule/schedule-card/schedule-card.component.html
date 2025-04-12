@@ -7,14 +7,14 @@
         <div class="count-style bold-text"
             [class.full-tooked]="isLessonFull()"
             [class.gaining]="!isLessonFull()">
-            {{lesson().studentsCount}} / {{lesson().type.maxStudentsCount}}
+            {{lesson().studentsCount}} / {{lesson().lessonType.maxStudentsCount}}
         </div>
         <div class="info-container">
             <div class="bold-text header-style">
-                {{lesson().type.subject.name}}
+                {{lesson().lessonType.subject.name}}
             </div>
             <div class="mt-2">
-               <span class="bold-text">Year: </span> {{lesson().type.schoolYear}}
+               <span class="bold-text">Year: </span> {{lesson().lessonType.schoolYear}}
             </div>
             <div>
                 <span class="bold-text">Time: </span> {{lesson().schedule.dayTime | date: 'HH:mm'}}
@@ -23,7 +23,7 @@
                 <span class="bold-text">Students: </span> {{lesson().studentsCount}}
             </div>
             <div>
-                <span class="bold-text">Price: </span> {{lessonPrice()}} @if(isTeacher()){ / {{lesson().type.price}} } 
+                <span class="bold-text">Price: </span> {{lessonPrice()}} @if(isTeacher()){ / {{lesson().lessonType.price}} } 
             </div>
         </div>
     </div>

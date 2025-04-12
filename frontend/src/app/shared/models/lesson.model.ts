@@ -4,7 +4,7 @@ import { Schedule } from "./schedule.model";
 export interface Lesson{
     lessonId: number;
     teacherId: number;
-    type: LessonType;
+    lessonType: LessonType;
     schedule: Schedule;
     studentsCount: number;
 }

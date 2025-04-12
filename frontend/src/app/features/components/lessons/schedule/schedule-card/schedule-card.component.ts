@@ -10,7 +10,7 @@ import { Roles } from '../../../../../shared/models/roles.enum';
   templateUrl: './schedule-card.component.html',
   styleUrl: './schedule-card.component.css'
 })
-export class ScheduleCardComponent {
+export class ScheduleCardComponent{
   lesson = input.required<Lesson>();
   isOnOwnPage = input.required<boolean>();
   isOnTeacherPage = input.required<boolean>();
@@ -25,9 +25,9 @@ export class ScheduleCardComponent {
 
   selectedLesson = output<Lesson>();
 
-  isLessonFull = computed(() => this.lesson().studentsCount === this.lesson().type.maxStudentsCount);
+  isLessonFull = computed(() => this.lesson().studentsCount === this.lesson().lessonType.maxStudentsCount);
   lessonPrice = computed(() => {
-    let lessonPrice = this.lesson().type.price / this.lesson().type.maxStudentsCount;
+    let lessonPrice = this.lesson().lessonType.price / this.lesson().lessonType.maxStudentsCount;
     if (this.isTeacher()) {
       lessonPrice *= this.lesson().studentsCount;
     }

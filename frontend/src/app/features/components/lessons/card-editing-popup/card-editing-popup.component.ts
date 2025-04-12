@@ -29,12 +29,16 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
 
   isEditing = computed(() => this.state() === ModalState.Editing);
 
-  subjects!: Subject[]; 
+  subjects = signal<Subject[] | null>(null); 
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 
   ngOnInit(): void {
-    this.subjects = this.lessonService.getSubjects();
+    this.lessonService.getSubjects().subscribe({
+      next: (subjects) => {
+        this.subjects.set(subjects);
+      }
+    })
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -95,13 +99,13 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
 
   loadLessonInfo() {
     this.form().patchValue({
-      subject: this.lesson()?.type.subject.subjectId,
-      schoolYear: this.lesson()?.type.schoolYear,
-      maxStudentsCount: this.lesson()?.type.maxStudentsCount,
+      subject: this.lesson()?.lessonType.subject.subjectId,
+      schoolYear: this.lesson()?.lessonType.schoolYear,
+      maxStudentsCount: this.lesson()?.lessonType.maxStudentsCount,
       day: this.lesson()?.schedule.dayOfWeek,
       hour: this.lesson()?.schedule.dayTime.getHours(),
       minutes: this.lesson()?.schedule.dayTime.getMinutes(),
-      price: this.lesson()?.type.price
+      price: this.lesson()?.lessonType.price
     })
     this.markAllTouched();
   }

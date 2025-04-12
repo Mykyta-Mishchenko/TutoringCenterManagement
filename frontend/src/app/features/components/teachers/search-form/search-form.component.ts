@@ -20,10 +20,14 @@ export class SearchFormComponent implements OnInit {
   filter = output<UsersFilter>();
 
   form = reactiveForm;
-  subjects!: Signal<Subject[]>;
+  subjects = signal<Subject[] | null>(null);
 
   ngOnInit(): void {
-    this.subjects = signal<Subject[]>(this.lessonService.getSubjects());
+    this.lessonService.getSubjects().subscribe({
+      next: (subjects) => {
+        this.subjects.set(subjects);
+      }
+    })
   }
 
   getRange(start: number, end: number): number[] {

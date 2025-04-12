@@ -26,7 +26,14 @@ namespace backend.Services
 
         public async Task<UserInfoDTO?> GetUser(int userId)
         {
-            return await _usersRepository.GetUserInfoAsync(userId);
+            if(await IsUserTeacherAsync(userId))
+            {
+                return await _usersRepository.GetTeacherInfoAsync(userId);
+            }
+            else
+            {
+                return await _usersRepository.GetStudentInfoAsync(userId);
+            }
         }
 
         public async Task<UserRole?> GetUserRole(int userId)
@@ -40,6 +47,18 @@ namespace backend.Services
                 return null;
 
             return Enum.Parse<UserRole>(role.Name, ignoreCase: true);
+        }
+
+        private async Task<bool> IsUserTeacherAsync(int userId)
+        {
+            var userRoles = await _rolesRepository.GetUserRolesAsync(userId);
+            var role = userRoles.FirstOrDefault(ur => ur.Name == UserRole.teacher.ToString());
+
+            if (role == null)
+                return false;
+
+            return true;
+
         }
     }
 }

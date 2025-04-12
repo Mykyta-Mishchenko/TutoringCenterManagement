@@ -165,7 +165,7 @@ namespace JwtBackend.Repositories
             return new UsersListDTO() { TotalPageNumber = totalPages, UsersList = usersInfo };
         }
 
-        public async Task<UserInfoDTO> GetUserInfoAsync(int userId)
+        public async Task<UserInfoDTO> GetTeacherInfoAsync(int userId)
         {
             return await _identityDbContext.Users
                 .Where(u => u.UserId == userId)
@@ -180,6 +180,24 @@ namespace JwtBackend.Repositories
                             Name = g.Key,
                             MinSchoolYear = g.Min(l => l.LessonType.SchoolYear),
                             MaxSchoolYear = g.Max(l => l.LessonType.SchoolYear)
+                        }).ToList()
+                }).FirstAsync();
+        }
+        public async Task<UserInfoDTO> GetStudentInfoAsync(int userId)
+        {
+            return await _identityDbContext.Users
+                .Where(u => u.UserId == userId)
+                .Select(u => new UserInfoDTO()
+                {
+                    UserId = userId,
+                    FullName = u.FirstName + " " + u.LastName,
+                    Subjects = u.StudentLessons
+                        .GroupBy(l => l.TeacherLesson.LessonType.Subject.SubjectName)
+                        .Select(g => new SubjectInfoDTO()
+                        {
+                            Name = g.Key,
+                            MinSchoolYear = g.Min(l => l.TeacherLesson.LessonType.SchoolYear),
+                            MaxSchoolYear = g.Max(l => l.TeacherLesson.LessonType.SchoolYear)
                         }).ToList()
                 }).FirstAsync();
         }

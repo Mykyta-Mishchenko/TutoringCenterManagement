@@ -4,9 +4,9 @@ using backend.DTO.AuthDTO;
 
 namespace JwtBackend.Mapping
 {
-    public class UserProfile : Profile
+    public class UserMappingProfile : Profile
     {
-        public UserProfile() 
+        public UserMappingProfile() 
         {
             CreateMap<SignUpDTO, User>()
            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))

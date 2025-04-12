@@ -42,13 +42,16 @@ export class ScheduleBoardComponent implements OnChanges {
 
   ngOnChanges(): void {
     this.isModalVisible.set(false);
-    this.boardService.loadUserLessons(this.userId());
-    this.buildBoardGrid();
 
     this.usersService.getUserRole(this.userId()).subscribe({
       next: (role) => {
         this.isOnTeacherPage.set(role === Roles.Teacher ? true : false);
-        this.addLessonBoxes();
+        this.boardService.loadUserLessons(this.userId()).subscribe({
+          next: (lessons) => {
+            this.buildBoardGrid();
+            this.addLessonBoxes();
+          }
+        }); 
       }
     });
   } 

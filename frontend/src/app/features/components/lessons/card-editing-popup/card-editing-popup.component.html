@@ -21,7 +21,7 @@
             [class.is-valid]="subjectIsValid && form().controls.subject.touched"
             [class.is-invalid]="!subjectIsValid && form().controls.subject.touched"
                     >
-            @for(subject of subjects; track subject.subjectId){
+            @for(subject of subjects(); track subject.subjectId){
               <option [value]="subject.subjectId">{{subject.name}}</option>
             }
           </select>

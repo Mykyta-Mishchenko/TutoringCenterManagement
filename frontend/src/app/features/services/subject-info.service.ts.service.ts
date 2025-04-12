@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Teacher } from '../../shared/models/teacher.model';
 import { Subject } from '../../shared/models/subject.model';
 import { Lesson } from '../../shared/models/lesson.model';
 
@@ -8,7 +7,7 @@ import { Lesson } from '../../shared/models/lesson.model';
 })
 export class SubjectInfoService {
   getUniqueSubjects(lessons: Lesson[]) : Subject[]{
-    const subjects = lessons.map(lesson => lesson.type.subject);
+    const subjects = lessons.map(lesson => lesson.lessonType.subject);
     return Array.from(
       new Map(subjects.map(subject => [subject.name, subject])).values()
     );
@@ -16,16 +15,16 @@ export class SubjectInfoService {
   
   getSubjectMinMaxYear(lessons: Lesson[], targetSubject: Subject) : string {  
     const minYear = lessons
-      .filter(lesson => lesson.type.subject.name === targetSubject.name)
+      .filter(lesson => lesson.lessonType.subject.name === targetSubject.name)
       .reduce((min, current) => 
-        current.type.schoolYear < min ? current.type.schoolYear : min, 
+        current.lessonType.schoolYear < min ? current.lessonType.schoolYear : min, 
         Infinity
       );
     
     const maxYear = lessons
-      .filter(lesson => lesson.type.subject.name === targetSubject.name)
+      .filter(lesson => lesson.lessonType.subject.name === targetSubject.name)
       .reduce((max, current) => 
-        current.type.schoolYear > max ? current.type.schoolYear : max,
+        current.lessonType.schoolYear > max ? current.lessonType.schoolYear : max,
         0
       );
   

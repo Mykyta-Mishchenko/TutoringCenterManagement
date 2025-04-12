@@ -10,7 +10,7 @@ namespace backend.Controllers
     [Authorize]
     public class UsersController : Controller
     {
-        private IUsersService _usersService;
+        private readonly IUsersService _usersService;
         public UsersController(IUsersService usersService)
         {
             _usersService = usersService;
