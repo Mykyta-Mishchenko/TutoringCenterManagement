@@ -1,21 +1,27 @@
-import { Injectable, OnInit} from "@angular/core";
-import { Teacher } from "../../shared/models/teacher.model";
-import { Schedule } from "../../shared/models/schedule.model";
+import { inject, Injectable, OnInit} from "@angular/core";
 import { User } from "../../shared/models/user.models";
 import { Roles } from "../../shared/models/roles.enum";
 import { UsersFilter } from "../../shared/models/dto/users-filter.dto";
+import { UserInfo } from "../../shared/models/dto/user-info.dto";
+import { UsersInfoList } from "../../shared/models/dto/users-info-list.dto";
+import { environment } from "../../../environments/environment";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
 @Injectable({
     providedIn: 'root'
 })
 export class UsersService implements OnInit{
 
+  private apiUrl = environment.apiUrl;
+  private httpClient = inject(HttpClient);
+
   public BasicTeachersFilter: UsersFilter =
   {
     role: Roles.Teacher,
     name: null,
-    subjectId: null,
-    schoolYear: null,
+    subjectId: 0,
+    schoolYear: 0,
     page: 1,
     perPage: 20
   };
@@ -28,315 +34,170 @@ export class UsersService implements OnInit{
     return {} as User;
   }
 
-  getUsersByFilter(filter: UsersFilter) {
-    return SAMPLE_TEACHERS_LIST;
+  getUsersByFilter(filter: UsersFilter): Observable<UsersInfoList> {
+    const queryString = this.buildQueryString(filter);
+    return this.httpClient.get<UsersInfoList>(`${this.apiUrl}/users?${queryString}`, { withCredentials: true });
   }
 
   getUserRole(userId: number): Roles {
     return Roles.Teacher;
   }
+
+  private buildQueryString(filter: UsersFilter): string {
+    const params = new URLSearchParams();
+    
+    if (filter.role) params.append('Role', filter.role);
+    if (filter.name) params.append('Name', filter.name);
+    if (filter.subjectId) params.append('SubjectId', filter.subjectId.toString());
+    if (filter.schoolYear) params.append('SchoolYear', filter.schoolYear.toString());
+    if (filter.page) params.append('Page', filter.page.toString());
+    if (filter.perPage) params.append('PerPage', filter.perPage.toString());
+    
+    return params.toString();
+  }
 }
 
-export const SAMPLE_TEACHERS_LIST: Teacher[] = [
+export const SAMPLE_TEACHERS_LIST: UserInfo[] = [
   {
-    id: 1,
+    userId: 1,
     fullName: "Olena Sydorenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 0,
-        teacherId: 1,
-        studentsCount: 2,
-        type: { typeId: 1, maxStudentsCount: 1, subject: { subjectId: 1, name: "Math" }, schoolYear: 7, price: 300 },
-        schedule: {} as Schedule
-      },
-      {
-        lessonId: 1,
-        teacherId: 1,
-        studentsCount: 1,
-        type: { typeId: 1, maxStudentsCount: 1, subject: { subjectId: 1, name: "Math" }, schoolYear: 5, price: 200 },
-        schedule: {} as Schedule
-      },
-      {
-        lessonId: 2,
-        teacherId: 1,
-        studentsCount: 3,
-        type: { typeId: 2, maxStudentsCount: 5, subject: { subjectId: 2, name: "Physics" }, schoolYear: 6, price: 180 },
-        schedule: {} as Schedule
-      }
+    subjects : [
+      { name: "Math", minSchoolYear: 5, maxSchoolYear: 7 },
+      { name: "Physics", minSchoolYear: 6, maxSchoolYear: 6 }
     ]
   },
   {
-    id: 2,
+    userId: 2,
     fullName: "Andriy Tkachenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 3,
-        teacherId: 2,
-        studentsCount: 4,
-        type: { typeId: 3, maxStudentsCount: 5, subject: { subjectId: 3, name: "Biology" }, schoolYear: 8, price: 170 },
-        schedule: {} as Schedule
-      },
-      {
-        lessonId: 4,
-        teacherId: 2,
-        studentsCount: 2,
-        type: { typeId: 4, maxStudentsCount: 5, subject: { subjectId: 1, name: "Math" }, schoolYear: 7, price: 160 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Biology", minSchoolYear: 8, maxSchoolYear: 8 },
+      { name: "Math", minSchoolYear: 7, maxSchoolYear: 7 }
     ]
   },
   {
-    id: 3,
+    userId: 3,
     fullName: "Iryna Koval",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 5,
-        teacherId: 3,
-        studentsCount: 1,
-        type: { typeId: 5, maxStudentsCount: 1, subject: { subjectId: 4, name: "English" }, schoolYear: 4, price: 220 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "English", minSchoolYear: 4, maxSchoolYear: 4 }
     ]
   },
   {
-    id: 4,
+    userId: 4,
     fullName: "Serhii Petrenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 6,
-        teacherId: 4,
-        studentsCount: 5,
-        type: { typeId: 6, maxStudentsCount: 5, subject: { subjectId: 5, name: "Chemistry" }, schoolYear: 9, price: 190 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Chemistry", minSchoolYear: 9, maxSchoolYear: 9 }
     ]
   },
   {
-    id: 5,
+    userId: 5,
     fullName: "Natalia Bondarenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 7,
-        teacherId: 5,
-        studentsCount: 2,
-        type: { typeId: 7, maxStudentsCount: 5, subject: { subjectId: 2, name: "Physics" }, schoolYear: 10, price: 180 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Physics", minSchoolYear: 10, maxSchoolYear: 10 }
     ]
   },
   {
-    id: 6,
+    userId: 6,
     fullName: "Volodymyr Kravchenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 8,
-        teacherId: 6,
-        studentsCount: 1,
-        type: { typeId: 8, maxStudentsCount: 1, subject: { subjectId: 6, name: "Geography" }, schoolYear: 6, price: 200 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Geography", minSchoolYear: 6, maxSchoolYear: 6 }
     ]
   },
   {
-    id: 7,
+    userId: 7,
     fullName: "Oksana Lysenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 9,
-        teacherId: 7,
-        studentsCount: 3,
-        type: { typeId: 9, maxStudentsCount: 5, subject: { subjectId: 7, name: "History" }, schoolYear: 7, price: 170 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "History", minSchoolYear: 7, maxSchoolYear: 7 }
     ]
   },
   {
-    id: 8,
+    userId: 8,
     fullName: "Ivan Moroz",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 10,
-        teacherId: 8,
-        studentsCount: 4,
-        type: { typeId: 10, maxStudentsCount: 5, subject: { subjectId: 3, name: "Biology" }, schoolYear: 11, price: 190 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Biology", minSchoolYear: 11, maxSchoolYear: 11 }
     ]
   },
   {
-    id: 9,
+    userId: 9,
     fullName: "Tetiana Marchenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 11,
-        teacherId: 9,
-        studentsCount: 2,
-        type: { typeId: 11, maxStudentsCount: 5, subject: { subjectId: 8, name: "Literature" }, schoolYear: 5, price: 180 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Literature", minSchoolYear: 5, maxSchoolYear: 5 }
     ]
   },
   {
-    id: 10,
+    userId: 10,
     fullName: "Roman Shapoval",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 12,
-        teacherId: 10,
-        studentsCount: 5,
-        type: { typeId: 12, maxStudentsCount: 5, subject: { subjectId: 9, name: "Informatics" }, schoolYear: 12, price: 210 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Informatics", minSchoolYear: 12, maxSchoolYear: 12 }
     ]
   },
   {
-    id: 11,
+    userId: 11,
     fullName: "Larysa Horobets",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 13,
-        teacherId: 11,
-        studentsCount: 1,
-        type: { typeId: 13, maxStudentsCount: 1, subject: { subjectId: 10, name: "Art" }, schoolYear: 3, price: 160 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Art", minSchoolYear: 3, maxSchoolYear: 3 }
     ]
   },
   {
-    id: 12,
+    userId: 12,
     fullName: "Petro Zadorozhnyi",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 14,
-        teacherId: 12,
-        studentsCount: 4,
-        type: { typeId: 14, maxStudentsCount: 5, subject: { subjectId: 11, name: "Music" }, schoolYear: 4, price: 150 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Music", minSchoolYear: 4, maxSchoolYear: 4 }
     ]
   },
   {
-    id: 13,
+    userId: 13,
     fullName: "Halyna Tarasova",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 15,
-        teacherId: 13,
-        studentsCount: 3,
-        type: { typeId: 15, maxStudentsCount: 5, subject: { subjectId: 4, name: "English" }, schoolYear: 6, price: 190 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "English", minSchoolYear: 6, maxSchoolYear: 6 }
     ]
   },
   {
-    id: 14,
+    userId: 14,
     fullName: "Maksym Vovk",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 16,
-        teacherId: 14,
-        studentsCount: 2,
-        type: { typeId: 16, maxStudentsCount: 5, subject: { subjectId: 2, name: "Physics" }, schoolYear: 8, price: 200 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Physics", minSchoolYear: 8, maxSchoolYear: 8 }
     ]
   },
   {
-    id: 15,
+    userId: 15,
     fullName: "Kateryna Danyliuk",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 17,
-        teacherId: 15,
-        studentsCount: 5,
-        type: { typeId: 17, maxStudentsCount: 5, subject: { subjectId: 5, name: "Chemistry" }, schoolYear: 10, price: 210 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Chemistry", minSchoolYear: 10, maxSchoolYear: 10 }
     ]
   },
   {
-    id: 16,
+    userId: 16,
     fullName: "Bohdan Yurchenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 18,
-        teacherId: 16,
-        studentsCount: 3,
-        type: { typeId: 18, maxStudentsCount: 5, subject: { subjectId: 6, name: "Geography" }, schoolYear: 9, price: 180 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Geography", minSchoolYear: 9, maxSchoolYear: 9 }
     ]
   },
   {
-    id: 17,
+    userId: 17,
     fullName: "Sofiia Lytvyn",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 19,
-        teacherId: 17,
-        studentsCount: 2,
-        type: { typeId: 19, maxStudentsCount: 5, subject: { subjectId: 1, name: "Math" }, schoolYear: 12, price: 200 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Math", minSchoolYear: 12, maxSchoolYear: 12 }
     ]
   },
   {
-    id: 18,
+    userId: 18,
     fullName: "Oleksandr Melnyk",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 20,
-        teacherId: 18,
-        studentsCount: 1,
-        type: { typeId: 20, maxStudentsCount: 1, subject: { subjectId: 7, name: "History" }, schoolYear: 3, price: 160 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "History", minSchoolYear: 3, maxSchoolYear: 3 }
     ]
   },
   {
-    id: 19,
+    userId: 19,
     fullName: "Yuliia Panchenko",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 21,
-        teacherId: 19,
-        studentsCount: 2,
-        type: { typeId: 21, maxStudentsCount:5, subject: { subjectId: 9, name: "Informatics" }, schoolYear: 11, price: 210 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Informatics", minSchoolYear: 11, maxSchoolYear: 11 }
     ]
   },
   {
-    id: 20,
+    userId: 20,
     fullName: "Denys Shevchuk",
-    profileImgUrl: null,
-    lessons: [
-      {
-        lessonId: 22,
-        teacherId: 20,
-        studentsCount: 4,
-        type: { typeId: 22, maxStudentsCount: 5, subject: { subjectId: 8, name: "Literature" }, schoolYear: 7, price: 190 },
-        schedule: {} as Schedule
-      }
+    subjects: [
+      { name: "Literature", minSchoolYear: 7, maxSchoolYear: 7 }
     ]
   }
 ];

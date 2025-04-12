@@ -15,17 +15,18 @@
         </div>
         <div class="bordered-list">
           @if(isStandartView()){
-            <app-card-list [teachers]="teachers"></app-card-list>
+            <app-card-list [teachers]="teachers()"></app-card-list>
           }
           @else {
-            <app-table-list [teachers]="teachers"></app-table-list>
+            <app-table-list [teachers]="teachers()"></app-table-list>
           }
         </div>
         <div class="d-flex justify-content-center mt-2">
           <app-pagination 
           [page]="page()"
           [count]="total()"
-          [perPage]="limit()"
+          [perPage]="perPage()"
+          [pagesToShow] ="limit()"
           (goPage)="goToPage($event)"
           (goPrev) = "goToPrevious()"
           (goNext)="goToNext()"

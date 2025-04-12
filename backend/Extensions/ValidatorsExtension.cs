@@ -13,6 +13,7 @@ namespace backend.Extensions
             services.AddValidatorsFromAssemblyContaining<SignUpDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<SignInDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<UserProfileValidator>();
+            services.AddValidatorsFromAssemblyContaining<UsersFilterDTOValidator>();
         }
     }
 }

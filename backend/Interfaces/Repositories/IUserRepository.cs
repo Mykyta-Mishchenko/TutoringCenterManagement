@@ -1,4 +1,5 @@
 ﻿using backend.Data.DataModels;
+using backend.DTO.UsersDTO;
 
 namespace backend.Interfaces.Repositories
 {
@@ -17,5 +18,6 @@ namespace backend.Interfaces.Repositories
         public Task<User> GetUserAsync(string email);
         public Task<string> GetUserProfileAsync(int userId);
         public Task SetUserProfileAsync(int userId, string profileImgUrl);
+        public Task<UsersListDTO> GetUsersByFilterAsync(UsersFilterDTO filter);
     }
 }

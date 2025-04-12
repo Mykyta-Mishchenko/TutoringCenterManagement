@@ -1,4 +1,4 @@
-﻿using backend.DTO;
+﻿using backend.DTO.UsersDTO;
 using backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

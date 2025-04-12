@@ -1,8 +1,7 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { Teacher } from '../../../../shared/models/teacher.model';
-import { Subject } from '../../../../shared/models/subject.model';
-import { SubjectInfoService } from '../../../services/subject-info.service.ts.service';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UserInfo } from '../../../../shared/models/dto/user-info.dto';
+import { ProfileService } from '../../../../shared/services/profile.service';
 
 
 @Component({
@@ -12,16 +11,27 @@ import { RouterLink } from '@angular/router';
   templateUrl: './teacher-card.component.html',
   styleUrl: './teacher-card.component.css'
 })
-export class TeacherCardComponent {
+export class TeacherCardComponent implements OnInit{
 
-  private subjectInfoService = inject(SubjectInfoService);
-  teacher = input.required<Teacher>();
+  private profileService = inject(ProfileService);
 
-  getUniqueSubjects(): Subject[] {
-    return this.subjectInfoService.getUniqueSubjects(this.teacher().lessons);
+  teacher = input.required<UserInfo>();
+  profileImgUrl = signal<string>('empty-profile.png');
+
+  ngOnInit(): void {
+    this.getProfileImgUrl();
   }
 
-  getSubjectMinMaxYear(subject: Subject) {
-    return this.subjectInfoService.getSubjectMinMaxYear(this.teacher().lessons, subject);
+  getProfileImgUrl() {
+    this.profileService.getUserProfile(this.teacher().userId).subscribe(
+      {
+        next: (imgUrl) => {
+          this.profileImgUrl.set(imgUrl)
+        },
+        error: (err) => {
+          this.profileImgUrl.set('empty-profile.png');
+        }
+      }
+    )
   }
 }

@@ -1,4 +1,4 @@
-﻿using backend.DTO;
+﻿using backend.DTO.UsersDTO;
 using FluentValidation;
 using System.Linq;
 

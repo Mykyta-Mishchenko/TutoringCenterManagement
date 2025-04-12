@@ -3,6 +3,10 @@ using backend.Interfaces.Services;
 using System.Text;
 using System.Security.Cryptography;
 using Host = Microsoft.AspNetCore.Hosting;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace backend.Services
 {
@@ -67,9 +71,21 @@ namespace backend.Services
                 fileName = BitConverter.ToString(hash).Replace("-", "");
             }
             var filePath = Path.Combine(_environment.ContentRootPath, "ProfileImages", fileName);
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            using (var image = await Image.LoadAsync<Rgba32>(file.OpenReadStream()))
             {
-                await file.CopyToAsync(fileStream);
+                int size = Math.Min(image.Width, image.Height);
+                int x = (image.Width - size) / 2;
+                int y = (image.Height - size) / 2;
+
+                image.Mutate(ctx => ctx
+                    .Crop(new Rectangle(x, y, size, size))
+                    .Resize(256, 256));
+
+                // Save with FileStream
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await image.SaveAsync(fileStream, new PngEncoder());
+                }
             }
             await _userRepository.SetUserProfileAsync(userId, filePath);
             return filePath;

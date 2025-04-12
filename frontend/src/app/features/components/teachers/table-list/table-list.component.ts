@@ -1,25 +1,26 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { Teacher } from '../../../../shared/models/teacher.model';
-import { Subject } from '../../../../shared/models/subject.model';
-import { SubjectInfoService } from '../../../services/subject-info.service.ts.service';
+import { Component, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { UserInfo } from '../../../../shared/models/dto/user-info.dto';
+import { ProfileService } from '../../../../shared/services/profile.service';
+import { catchError, Observable, of } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-table-list',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AsyncPipe],
   templateUrl: './table-list.component.html',
   styleUrl: './table-list.component.css'
 })
 export class TableListComponent {
-  private subjectInfoService = inject(SubjectInfoService);
-  teachers = input.required<Teacher[]>()
 
-  getUniqueSubjects(teacher: Teacher): Subject[] {
-    return this.subjectInfoService.getUniqueSubjects(teacher.lessons);
-  }
+  private profileService = inject(ProfileService);
 
-  getSubjectMinMaxYear(teacher: Teacher, subject: Subject) {
-    return this.subjectInfoService.getSubjectMinMaxYear(teacher.lessons, subject);
+  teachers = input.required<UserInfo[] | null>()
+  
+  getProfileImgUrl(userId: number): Observable<string> {
+    return this.profileService.getUserProfile(userId).pipe(
+      catchError(() => of('empty-profile.png'))
+    );
   }
 }

@@ -42,7 +42,7 @@ export class PaginationComponent {
   getPages(): number[] {
     const totalPages = Math.ceil(this.count() / this.perPage());
     const thisPage = this.page() || 1;
-    const pagesToShow = this.pagesToShow() || 9;
+    const pagesToShow = this.pagesToShow() || 1;
     const pages: number[] = [];
     pages.push(thisPage);
 

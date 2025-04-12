@@ -1,5 +1,5 @@
 <div id="teachersDashboard">
-    @for(teacher of teachers(); track teacher.id){
+    @for(teacher of teachers(); track teacher.userId){
         <app-teacher-card [teacher]="teacher" ></app-teacher-card>
     }
 </div>

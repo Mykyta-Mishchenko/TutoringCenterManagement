@@ -1,7 +1,7 @@
 <div class="card-box">
     <div id="profile">
         <div id="cardImgBox">
-            <img [src]="teacher().profileImgUrl || 'empty-profile.png'" class="profile-img mt-3 mb-3">
+            <img [src]="profileImgUrl()" class="profile-img mt-3 mb-3">
         </div>
         <div class="card-body" id="cardBody">
             <h5 clas="card-title">
@@ -16,18 +16,18 @@
                         Classes:
                     </div>
                 </div>
-                @for(subject of getUniqueSubjects(); track subject.name){
+                @for(subject of teacher().subjects; track subject.name){
                     <div class="subject">
                         <div class="subject-name">
                             {{ subject.name }}
                         </div>
                         <div class="subject-class">
-                            {{ getSubjectMinMaxYear(subject) }}
+                            {{ subject.minSchoolYear }} - {{ subject.maxSchoolYear }}
                         </div>
                     </div>
                 }
             </div>
-            <button class="btn btn-outline-success btn-bottom" routerLink="profile" [queryParams]="{userId: teacher().id}"> 
+            <button class="btn btn-outline-success btn-bottom" routerLink="profile" [queryParams]="{userId: teacher().userId}"> 
                 Sign up for classes 
             </button>
         </div>

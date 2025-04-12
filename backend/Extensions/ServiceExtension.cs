@@ -18,6 +18,7 @@ namespace JwtBackend.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IUsersService, UsersService>();
         }
     }
 }

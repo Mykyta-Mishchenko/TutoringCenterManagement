@@ -1,12 +1,11 @@
 import { Component, computed, inject, OnInit, signal} from '@angular/core';
-import { Teacher } from '../../../../shared/models/teacher.model';
 import { CardListComponent } from "../card-list/card-list.component";
 import { TableListComponent } from "../table-list/table-list.component";
 import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
 import { UsersService } from '../../../services/users.service';
-import { Roles } from '../../../../shared/models/roles.enum';
 import { UsersFilter } from '../../../../shared/models/dto/users-filter.dto';
 import { SearchFormComponent } from "../search-form/search-form.component";
+import { UserInfo } from '../../../../shared/models/dto/user-info.dto';
 
 @Component({
   selector: 'app-teachers-list',
@@ -19,14 +18,15 @@ export class TeachersListComponent implements OnInit {
 
   private usersService = inject(UsersService);
 
-  teachers!: Teacher[];
+  teachers = signal<UserInfo[] | null>(null);
   isStandartView = signal<boolean>(true);
   viewName = computed(() => this.isStandartView() ? "cards" : "table");
   filter = signal<UsersFilter>(this.usersService.BasicTeachersFilter);
 
-  total = signal<number>(10);
-  page = signal<number>(1);
-  limit = signal<number>(1);
+  total = signal<number>(1);
+  page = signal<number>(this.filter().page);
+  limit = signal<number>(10);
+  perPage = signal<number>(this.filter().perPage);
   loading = false;
 
   ngOnInit(): void {
@@ -34,7 +34,12 @@ export class TeachersListComponent implements OnInit {
   }
 
   getTeachers(filter: UsersFilter) {
-    this.teachers = this.usersService.getUsersByFilter(filter);
+    this.usersService.getUsersByFilter(filter).subscribe({
+      next: (usersList) => {
+        this.teachers.set(usersList.usersList);
+        this.total.set(usersList.totalPageNumber);
+      }
+    });
   }
 
   onSwitcherChange(event: Event) {
@@ -44,11 +49,13 @@ export class TeachersListComponent implements OnInit {
 
   goToPrevious() {
     this.page.set(this.page() - 1);
+    this.filter.update((current) => ({...current, page: current.page - 1}));
     this.getTeachers(this.filter());
   }
 
   goToNext() {
     this.page.set(this.page() + 1);
+    this.filter.update((current) => ({...current, page: current.page + 1}));
     this.getTeachers(this.filter());
   }
 
