@@ -11,16 +11,10 @@ namespace JwtBackend.Extensions
     {
         public static void AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IRoleRepository, RoleRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IProfileService, ProfileService>();
-            services.AddScoped<ISessionRepository, SessionRepository>();
-            services.AddScoped<ILessonsRepository, LessonsRepository>();
-
-            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<ILessonsService, LessonsService>();
         }
     }

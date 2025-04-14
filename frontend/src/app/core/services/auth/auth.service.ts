@@ -95,7 +95,7 @@ export class AuthService{
       const payload: any = jwtDecode(token);
 
       return {
-        userId: payload.sid!,
+        userId: payload.nameid,
         username: payload.unique_name + " " + payload.family_name,
         email: payload.email,
         role: payload.role,

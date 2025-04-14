@@ -1,6 +1,7 @@
 ﻿using backend.Data.DataModels;
 using backend.DTO.LessonsDTO;
 using backend.Interfaces.Repositories;
+using backend.Models;
 using JwtBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -14,12 +15,30 @@ namespace backend.Repositories
         {
             _identityDbContext = identityDbContext;
         }
+
+        public void DeleteTeacherLesson(TeacherLesson lesson)
+        {
+            _identityDbContext.TeacherLessons.Remove(lesson);
+            _identityDbContext.SaveChanges();
+        }
+
+        public async Task<TeacherLesson?> GetTeacherLessonAsync(int lessonId)
+        {
+            return await _identityDbContext.TeacherLessons.FirstOrDefaultAsync(l => l.LessonId == lessonId);
+        }
+
+        public async Task<StudentLesson?> GetStudentLessonAsync(int studentId, int lessonId)
+        {
+            return await _identityDbContext.StudentLessons
+                .FirstOrDefaultAsync(l => l.LessonId == lessonId && l.StudentId == studentId);
+        }
+
         public async Task<IList<Subject>> GetAllSubjectsAsync()
         {
            return await _identityDbContext.Subjects.ToListAsync();
         }
 
-        public async Task<IList<TeacherLesson>> GetTeacherLessons(int userId)
+        public async Task<IList<TeacherLesson>> GetTeacherLessonsAsync(int userId)
         {
             return await _identityDbContext.TeacherLessons
                 .Where(l => l.TeacherId == userId)
@@ -28,7 +47,7 @@ namespace backend.Repositories
                 .Include(l => l.Schedule)
                 .Include(l => l.StudentLessons).ToListAsync();
         }
-        public async Task<IList<StudentLesson>> GetStudentLessons(int userId)
+        public async Task<IList<StudentLesson>> GetStudentLessonsAsync(int userId)
         {
             return await _identityDbContext.StudentLessons
                 .Where(sl => sl.StudentId == userId)
@@ -39,6 +58,96 @@ namespace backend.Repositories
                     .ThenInclude(lt => lt.Subject)
                 .Include(sl => sl.TeacherLesson)
                     .ThenInclude(tl => tl.StudentLessons).ToListAsync();
+        }
+
+        public async Task<TeacherLesson?> CreateTeacherLessonAsync(TeacherLesson lesson)
+        {
+            await _identityDbContext.TeacherLessons.AddAsync(lesson);
+            await _identityDbContext.SaveChangesAsync();
+            return lesson;
+        }
+
+        public async Task<TeacherLesson?> GetCrossingTeacherLessonAsync(TeacherLesson lesson)
+        {
+            var oneHour = new TimeSpan(1, 0, 0);
+            var lessonStart = lesson.Schedule.DayTime;
+            var lessonEnd = lessonStart.Add(oneHour);
+
+            var lessons = await _identityDbContext.TeacherLessons
+                .Include(l => l.Schedule)
+                .Where(l => l.TeacherId == lesson.TeacherId &&
+                            l.Schedule.DayOfWeek == lesson.Schedule.DayOfWeek &&
+                            l.LessonId != lesson.LessonId)
+                .ToListAsync();
+
+            return lessons.FirstOrDefault(l =>
+                l.Schedule.DayTime < lessonEnd &&
+                l.Schedule.DayTime.Add(oneHour) > lessonStart);
+        }
+
+        public async Task<StudentLesson?> GetCrossingStudentLessonAsync(StudentLesson lesson)
+        {
+            var schedule = await _identityDbContext.Schedules
+                .FirstOrDefaultAsync(s => s.DateId == lesson.TeacherLesson.ScheduleId);
+            var oneHour = new TimeSpan(1, 0, 0);
+            var lessonStart = schedule.DayTime;
+            var lessonEnd = lessonStart.Add(oneHour);
+
+            var lessons = await _identityDbContext.StudentLessons
+                .Include(l => l.TeacherLesson.Schedule)
+                .Where(l => l.StudentId == lesson.StudentId &&
+                            l.TeacherLesson.Schedule.DayOfWeek == schedule.DayOfWeek &&
+                            l.LessonId != lesson.LessonId)
+                .ToListAsync();
+
+            return lessons.FirstOrDefault(l =>
+                l.TeacherLesson.Schedule.DayTime < lessonEnd &&
+                l.TeacherLesson.Schedule.DayTime.Add(oneHour) > lessonStart);
+        }
+
+        public async Task<TeacherLesson?> UpdateTeacherLessonAsync(TeacherLesson updatedLesson)
+        {
+            var dbLesson = await _identityDbContext.TeacherLessons.Include(l=>l.LessonType)
+                .FirstOrDefaultAsync(l => l.LessonId == updatedLesson.LessonId);
+
+            if (dbLesson == null) return null;
+
+            var newLessonType = await _identityDbContext.LessonTypes
+                .FirstOrDefaultAsync(lt => lt.TypeId == updatedLesson.TypeId);
+
+            var oldLessonCount = dbLesson.LessonType.MaxStudentsCount; 
+
+            if(newLessonType?.MaxStudentsCount < oldLessonCount)
+            {
+                var allSubscribedStudents = await _identityDbContext.StudentLessons
+                    .Where(l => l.LessonId == dbLesson.LessonId).ToListAsync();
+
+                if(allSubscribedStudents.Count > newLessonType?.MaxStudentsCount)
+                {
+                    _identityDbContext.StudentLessons.RemoveRange(allSubscribedStudents);
+                }
+            }
+
+            dbLesson.TypeId = updatedLesson.TypeId;
+            dbLesson.ScheduleId = updatedLesson.ScheduleId;
+
+            _identityDbContext.TeacherLessons.Update(dbLesson);
+            await _identityDbContext.SaveChangesAsync();
+            return dbLesson;
+        }
+
+        public async Task<StudentLesson?> CreateStudentLessonAsync(StudentLesson lesson)
+        {
+            await _identityDbContext.StudentLessons.AddAsync(lesson);
+            await _identityDbContext.SaveChangesAsync();
+            return lesson;
+        }
+
+        public async Task<OperationResult> DeleteStudentLessonAsync(StudentLesson lesson)
+        {
+            _identityDbContext.StudentLessons.Remove(lesson);
+            await _identityDbContext.SaveChangesAsync();
+            return OperationResult.Success;
         }
     }
 }

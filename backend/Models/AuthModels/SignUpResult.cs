@@ -1,6 +1,8 @@
-﻿namespace JwtBackend.Models
+﻿using backend.Models;
+
+namespace JwtBackend.Models
 {
-    public class SignUpResult
+    public class SignUpResult: OperationResult
     {
         public static SignUpResult Success => new SignUpResult() { Succeeded = true };
         public static SignUpResult Failure => new SignUpResult() { Failed = true };
@@ -9,8 +11,6 @@
 
         private SignUpResult() { }
 
-        public bool Succeeded { get; protected set; }
-        public bool Failed { get; protected set; }
         public bool IsEmailAlreadyRegistered { get; protected set; }
         public string ErrorMessage { get; protected set; }
 

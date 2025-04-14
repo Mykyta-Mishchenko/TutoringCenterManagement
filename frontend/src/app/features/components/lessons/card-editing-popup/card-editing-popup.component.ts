@@ -5,8 +5,10 @@ import { Lesson } from '../../../../shared/models/lesson.model';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject } from '../../../../shared/models/subject.model';
 import { LessonService } from '../../../services/lesson.service';
-import { LessonDTO } from '../../../../shared/models/dto/lesson-create.dto';
 import { ModalState } from '../models/modal-state.enum';
+import { LessonEditDTO } from '../../../../shared/models/dto/lesson-edit.dto';
+import { LessonCreateDTO } from '../../../../shared/models/dto/lesson-create.dto';
+import { BoardService } from '../../../services/board.service';
 
 @Component({
   selector: 'app-card-editing-popup',
@@ -17,17 +19,20 @@ import { ModalState } from '../models/modal-state.enum';
 })
 export class CardEditingPopupComponent implements OnInit, OnChanges{
 
+  private boardService = inject(BoardService)
   private lessonService = inject(LessonService);
   private lessonForm = inject(LessonForm);
   lesson = input.required<Lesson | null>();
   show = input.required<boolean>();
   state = input.required<ModalState>();
+  userId = input.required<number>();
   close = output();
-  update = output();
 
   form = signal<FormGroup<FormModel>>(this.lessonForm.generateForm());
 
   isEditing = computed(() => this.state() === ModalState.Editing);
+
+  isIncorrectResponse = signal<boolean>(false);
 
   subjects = signal<Subject[] | null>(null); 
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -50,10 +55,24 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
       this.form.set(this.lessonForm.generateForm());
       this.loadLessonInfo();
     }
+    this.form().controls.day.markAsTouched();
+    this.form().controls.hour.markAsTouched();
+    this.form().controls.minutes.markAsTouched();
   }
 
   closeModal() {
     this.close.emit();
+  }
+
+  onDelete() {
+    if (this.lesson()?.lessonId) {
+      this.lessonService.deleteLesson(this.lesson()!.lessonId).subscribe({
+        next: (response) => {
+          this.boardService.loadUserLessons(this.userId()).subscribe();
+          this.closeModal();
+        }
+      });
+    }
   }
 
   onSubmit() {
@@ -67,26 +86,30 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
       this.priceIsValid &&
       this.timeIsValid
     ) {
-      const lesson: LessonDTO = {
-        lessonId: this.lesson()?.lessonId ?? null,
-        subjectId: this.form().controls.subject.value,
-        schoolYear: this.form().controls.schoolYear.value,
-        maxStudentsCount: this.form().controls.maxStudentsCount.value,
-        day: this.form().controls.day.value,
-        hour: this.form().controls.hour.value,
-        minutes: this.form().controls.minutes.value,
-        price: this.form().controls.price.value
-      }
-      
-      this.closeModal();
       if (this.state() === ModalState.Editing) {
-        this.lessonService.updateLesson(lesson);
+        this.lessonService.updateLesson(this.getEditLessonDTO()).subscribe({
+          next: (response) => {
+            this.boardService.loadUserLessons(this.userId()).subscribe();
+            this.closeModal();
+            this.isIncorrectResponse.set(false);
+          },
+          error: (error) => {
+            this.isIncorrectResponse.set(true);
+          }
+        });
       }
       else {
-        this.lessonService.addLesson(lesson);
+        this.lessonService.addLesson(this.getCreateLessonDTO()).subscribe({
+          next: (response) => {  
+            this.boardService.loadUserLessons(this.userId()).subscribe();
+            this.closeModal();
+            this.isIncorrectResponse.set(false);
+          },
+          error: (error) => {
+            this.isIncorrectResponse.set(true);
+          }
+        });
       }
-
-      this.update.emit();
     }
     else {
       this.markAllTouched();
@@ -153,5 +176,32 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
     this.form().controls.hour.markAsTouched(); 
     this.form().controls.minutes.markAsTouched(); 
     this.form().controls.price.markAsTouched(); 
+  }
+
+  getCreateLessonDTO(): LessonCreateDTO {
+    return {
+      userId: this.userId(),
+      subjectId: this.form().controls.subject.value,
+      schoolYear: this.form().controls.schoolYear.value,
+      maxStudentsCount: this.form().controls.maxStudentsCount.value,
+      day: this.form().controls.day.value,
+      hour: this.form().controls.hour.value,
+      minutes: this.form().controls.minutes.value,
+      price: this.form().controls.price.value
+    } 
+  }
+
+  getEditLessonDTO(): LessonEditDTO {
+    return {
+      lessonId: this.lesson()!.lessonId,
+      userId: this.userId(),
+      subjectId: this.form().controls.subject.value,
+      schoolYear: this.form().controls.schoolYear.value,
+      maxStudentsCount: this.form().controls.maxStudentsCount.value,
+      day: this.form().controls.day.value,
+      hour: this.form().controls.hour.value,
+      minutes: this.form().controls.minutes.value,
+      price: this.form().controls.price.value
+    }
   }
 }

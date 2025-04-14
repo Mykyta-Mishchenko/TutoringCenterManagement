@@ -7,7 +7,7 @@ namespace backend.Data.DataModels
         [BindNever]
         public int DateId { get; set; }
         public int DayOfWeek { get; set; }
-        public DateTime DayTime { get; set; }
+        public TimeSpan DayTime { get; set; }
 
         public ICollection<TeacherLesson> Lessons { get; set; }
     }

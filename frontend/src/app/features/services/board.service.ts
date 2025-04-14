@@ -17,15 +17,6 @@ export class BoardService{
 
     loadUserLessons(userId: number): Observable<Lesson[]> {
         return this.lessonService.getUserSchedule(userId).pipe(
-            map(lessons =>
-                lessons.map(lesson => ({
-                    ...lesson,
-                    schedule: {
-                        ...lesson.schedule,
-                        dayTime: new Date(lesson.schedule.dayTime)
-                    }
-                }))
-            ),
             tap(lessons => this.lessons.set(lessons))
         )
     }

@@ -18,7 +18,7 @@ namespace JwtBackend.Repositories
             await _identityDbContext.SaveChangesAsync();
         }
 
-        public async Task<IList<RefreshSession>> GetSessionAsync(User user)
+        public async Task<IList<RefreshSession>> GetUserSessionsAsync(User user)
         {
             var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if(dbUser != null)
@@ -30,7 +30,7 @@ namespace JwtBackend.Repositories
             return new List<RefreshSession> ();
         }
 
-        public async Task<RefreshSession> GetSessionAsync(string refreshToken)
+        public async Task<RefreshSession?> GetUserSessionByTokenAsync(string refreshToken)
         {
             return await _identityDbContext.RefreshSessions.FirstOrDefaultAsync(s => s.RefreshToken == refreshToken);
         }

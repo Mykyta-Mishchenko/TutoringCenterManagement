@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, input, OnChanges, OnInit, Renderer2, signal, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, computed, effect, ElementRef, inject, input, OnChanges, OnInit, Renderer2, signal, ViewContainerRef } from '@angular/core';
 import { ScheduleCardComponent } from '../schedule-card/schedule-card.component';
 import { CardEditingPopupComponent } from "../../card-editing-popup/card-editing-popup.component";
 import { Lesson } from '../../../../../shared/models/lesson.model';
@@ -19,7 +19,7 @@ import { UsersService } from '../../../../services/users.service';
   templateUrl: './schedule-board.component.html',
   styleUrl: './schedule-board.component.css'
 })
-export class ScheduleBoardComponent implements OnChanges {
+export class ScheduleBoardComponent implements OnChanges{
   private boardService = inject(BoardService);
   private authService = inject(AuthService);
   private renderer = inject(Renderer2);
@@ -38,7 +38,18 @@ export class ScheduleBoardComponent implements OnChanges {
   selectedLesson = signal<Lesson | null>(null);
   modalState = signal<ModalState>(ModalState.Editing);
 
+  lessonComponentRefs: { componentRef: ComponentRef<ScheduleCardComponent>, hostDiv: HTMLElement }[] = [];
+
   lessons = computed(() => this.boardService.lessons());
+
+  constructor() {
+    effect(() => {
+      const lessons = this.boardService.lessons();
+      this.clearBoard();
+      this.buildBoardGrid();
+      this.addLessonBoxes();
+    });
+  }
 
   ngOnChanges(): void {
     this.isModalVisible.set(false);
@@ -46,12 +57,7 @@ export class ScheduleBoardComponent implements OnChanges {
     this.usersService.getUserRole(this.userId()).subscribe({
       next: (role) => {
         this.isOnTeacherPage.set(role === Roles.Teacher ? true : false);
-        this.boardService.loadUserLessons(this.userId()).subscribe({
-          next: (lessons) => {
-            this.buildBoardGrid();
-            this.addLessonBoxes();
-          }
-        }); 
+        this.boardService.loadUserLessons(this.userId()).subscribe(); 
       }
     });
   } 
@@ -63,10 +69,6 @@ export class ScheduleBoardComponent implements OnChanges {
   startLessonEditing(lesson: Lesson) {
     this.selectedLesson.set(lesson);
     this.isModalVisible.set(true);
-  }
-
-  onUpdate() {
-    this.boardService.loadUserLessons(this.userId());
   }
 
   addLessonBoxes(){
@@ -93,7 +95,6 @@ export class ScheduleBoardComponent implements OnChanges {
     const componentRef = this.viewContainerRef.createComponent(ScheduleCardComponent);
     componentRef.setInput('lesson', lesson);
 
-    //TODO with user service getUserRole: if student go on student page
     componentRef.setInput('currentUserRole', this.authService.isTeacher() ? Roles.Teacher : Roles.Student);
     componentRef.setInput('isOnTeacherPage', this.isOnTeacherPage());
     componentRef.setInput('isOnOwnPage', this.isOnOwnPage());
@@ -101,6 +102,7 @@ export class ScheduleBoardComponent implements OnChanges {
       this.startLessonEditing(lesson);
     });
     lessonBox.appendChild(componentRef.location.nativeElement);
+    this.lessonComponentRefs.push({ componentRef, hostDiv: lessonBox });
   }
 
   buildBoardGrid() {
@@ -171,6 +173,15 @@ export class ScheduleBoardComponent implements OnChanges {
       this.renderer.setStyle(dayBorder, 'grid-column', i + 2);
       this.renderer.addClass(dayBorder, 'day-line');
       this.renderer.appendChild(dashboard, dayBorder);
+    }
+  }
+
+  clearBoard() {
+    if (this.lessonComponentRefs.length > 0) {
+      this.lessonComponentRefs.forEach(entry => {
+        entry.componentRef.destroy();
+      });
+      this.lessonComponentRefs = [];
     }
   }
 }

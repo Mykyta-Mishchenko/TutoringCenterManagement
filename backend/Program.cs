@@ -38,6 +38,7 @@ builder.Services.AddAuthorization();
 
 
 builder.Services.AddApplicationServices();
+builder.Services.AddApplicationRepositories();
 
 builder.Services.AddValidators();
 

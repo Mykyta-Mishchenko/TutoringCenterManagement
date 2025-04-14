@@ -1,6 +1,8 @@
-﻿namespace JwtBackend.Models
+﻿using backend.Models;
+
+namespace JwtBackend.Models
 {
-    public class SignInResult
+    public class SignInResult: OperationResult
     {
         public static SignInResult Success => new SignInResult() { Succeeded = true };
         public static SignInResult Failure => new SignInResult() { Failed = true };
@@ -10,8 +12,6 @@
 
         private SignInResult() { }
 
-        public bool Succeeded { get; protected set; }
-        public bool Failed { get; protected set; }
         public bool IsNotAllowed { get; protected set; }
         public string ErrorMessage { get; protected set; }
         public SessionTokens Tokens { get; protected set; }

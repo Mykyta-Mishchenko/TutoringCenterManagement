@@ -16,6 +16,7 @@
 @if(isOnOwnPage()){
     <div *hasRole="'teacher'">
         <app-card-editing-popup
+        [userId]="selectedUserId()"
         [lesson]="null"
         [show]="isModalVisible()"
         [state]="modalState()"

@@ -11,7 +11,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form class="boxed-form" [formGroup]="form()" (ngSubmit)="onSubmit()">
+      <form class="boxed-form" [formGroup]="form()">
         <div class="form-group">
           <label for="subject">Subject:</label>
           <select
@@ -146,14 +146,25 @@
               [class.is-invalid]="!priceIsValid && form().controls.price.touched"
               id="price" 
               formControlName="price">
-              @if(!priceIsValid && form().controls.price.touched){
+              @if(!priceIsValid && (form().controls.price.touched || form().controls.maxStudentsCount.touched)){
                   <div class="invalid-feedback">
                       Please provide correct price. It's should be in range 0 to 1000 and must be divided into 5 and max students count!
                   </div>
               }
         </div>
-        <div class="form-row d-flex justify-content-end">
-          <button type="submit" class="btn btn-outline-success mt-2 btn-edit">
+        <div class="form-group">
+          <input type="hidden" class="is-invalid" />
+          @if(isIncorrectResponse()){
+            <div class="invalid-feedback">
+              Please check your fields!
+            </div>
+          }
+        </div>
+        <div class="form-row d-flex justify-content-between mt-2 px-1">
+          @if(isEditing()){
+            <button (click)="onDelete()" class="btn btn-outline-danger btn-edit">Delete</button>
+          }
+          <button (click)="onSubmit()" class="btn btn-outline-success btn-edit">
             @if(isEditing()){Edit}
             @else {Create}
           </button>

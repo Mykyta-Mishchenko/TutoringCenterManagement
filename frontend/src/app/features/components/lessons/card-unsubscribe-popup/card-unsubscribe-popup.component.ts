@@ -3,6 +3,7 @@ import { BoardService } from '../../../services/board.service';
 import { LessonService } from '../../../services/lesson.service';
 import { DatePipe, NgIf } from '@angular/common';
 import { Lesson } from '../../../../shared/models/lesson.model';
+import { AuthService } from '../../../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-card-unsubscribe-popup',
@@ -12,8 +13,9 @@ import { Lesson } from '../../../../shared/models/lesson.model';
   styleUrl: './card-unsubscribe-popup.component.css'
 })
 export class CardUnsubscribePopupComponent {
-
+  private authService = inject(AuthService);
   private lessonService = inject(LessonService);
+  private boardService = inject(BoardService);
 
   show = input.required<boolean>();
   lesson = input.required<Lesson | null>();
@@ -31,8 +33,12 @@ export class CardUnsubscribePopupComponent {
 
   unsubscribe() {
     if (this.lesson()?.lessonId) {
-      this.lessonService.unsubscribeLesson(this.lesson()!.lessonId);
-      this.close.emit();
+      this.lessonService.unsubscribeLesson(this.lesson()!.lessonId).subscribe({
+        next: () => {
+          this.boardService.loadUserLessons(this.authService.User()!.userId).subscribe();
+          this.close.emit();
+        }
+      });
     }
   }
 

@@ -5,7 +5,7 @@ import { BoardService } from "../../../services/board.service";
 @Injectable({
     providedIn:'root'
 })
-export class ValidatorService {
+export class LessonValidatorService {
 
     private boardService = inject(BoardService);
 

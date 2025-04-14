@@ -38,7 +38,7 @@ namespace backend.Services
 
         public async Task<string> SetUserProfileAsync(string refreshToken, IFormFile file)
         {
-            var session = await _sessionRepository.GetSessionAsync(refreshToken);
+            var session = await _sessionRepository.GetUserSessionByTokenAsync(refreshToken);
 
             if (session != null)
             {

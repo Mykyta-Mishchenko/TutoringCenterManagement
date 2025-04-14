@@ -68,7 +68,7 @@ namespace JwtBackend.Services
                 }
                 try
                 {
-                    var sessions = await _sessionRepository.GetSessionAsync(dbUser);
+                    var sessions = await _sessionRepository.GetUserSessionsAsync(dbUser);
                     if (sessions.Count() > 5)
                     {
                         _sessionRepository.RemoveUserSessions(dbUser);
@@ -123,7 +123,7 @@ namespace JwtBackend.Services
 
         public async Task<SessionTokens?> RefreshSessionAsync(string refreshToken)
         {
-            var session = await _sessionRepository.GetSessionAsync(refreshToken);
+            var session = await _sessionRepository.GetUserSessionByTokenAsync(refreshToken);
 
             if (session != null)
             {

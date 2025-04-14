@@ -26,12 +26,12 @@ namespace JwtBackend.Repositories
             await _identityDbContext.SaveChangesAsync();
         }
 
-        public async Task<User> GetUserAsync(int Id)
+        public async Task<User?> GetUserAsync(int Id)
         {
             return await _identityDbContext.Users.FindAsync(Id);
         }
 
-        public async Task<User> GetUserAsync(string email)
+        public async Task<User?> GetUserAsync(string email)
         {
             return await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
@@ -165,7 +165,7 @@ namespace JwtBackend.Repositories
             return new UsersListDTO() { TotalPageNumber = totalPages, UsersList = usersInfo };
         }
 
-        public async Task<UserInfoDTO> GetTeacherInfoAsync(int userId)
+        public async Task<UserInfoDTO?> GetTeacherInfoAsync(int userId)
         {
             return await _identityDbContext.Users
                 .Where(u => u.UserId == userId)
@@ -183,7 +183,7 @@ namespace JwtBackend.Repositories
                         }).ToList()
                 }).FirstAsync();
         }
-        public async Task<UserInfoDTO> GetStudentInfoAsync(int userId)
+        public async Task<UserInfoDTO?> GetStudentInfoAsync(int userId)
         {
             return await _identityDbContext.Users
                 .Where(u => u.UserId == userId)

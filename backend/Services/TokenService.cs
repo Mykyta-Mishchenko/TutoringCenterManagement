@@ -53,7 +53,7 @@ namespace JwtBackend.Services
 
             var claims = new List<Claim>
             {
-                new Claim("sid", user.UserId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Name, user.FirstName),
                 new Claim(ClaimTypes.Surname, user.LastName ?? ""),
                 new Claim(ClaimTypes.Email, user.Email)

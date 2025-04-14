@@ -8,8 +8,9 @@
     [lesson]="selectedLesson()"
     [show]="isModalVisible()" 
     [state]="modalState()"
+    [userId]="userId()"
     (close)="onModalClose()"
-    (update)="onUpdate()"></app-card-editing-popup>
+    ></app-card-editing-popup>
   </div>
 
   <div *hasRole="'student'">
@@ -25,6 +26,7 @@
     <app-card-subscribe-popup
       [show]="isModalVisible()"
       [lesson]="selectedLesson()"
+      [userId]="userId()"
       (close)="onModalClose()"></app-card-subscribe-popup>
   </div>
 }

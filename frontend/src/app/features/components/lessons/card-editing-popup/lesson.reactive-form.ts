@@ -1,5 +1,5 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { ValidatorService } from "./validator.service";
+import { LessonValidatorService } from "./validator.service";
 import { inject, Injectable, input, signal } from "@angular/core";
 
 export interface FormModel {
@@ -17,7 +17,7 @@ export interface FormModel {
 })
 export class LessonForm{
 
-    private validatorService = inject(ValidatorService);
+    private validatorService = inject(LessonValidatorService);
 
     private lessonId = signal<number | null>(null);
 
@@ -50,7 +50,7 @@ export class LessonForm{
             }),
             price: new FormControl<number>(0, {
                 nonNullable: true,
-                validators: [Validators.required, Validators.min(0), Validators.max(1000),
+                validators: [Validators.required, Validators.min(0), Validators.max(5000),
                 this.validatorService.stepValidator(5), this.validatorService.wholeNumberValidator(),
                 this.validatorService.divisorValidator()]
             })

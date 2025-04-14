@@ -1,4 +1,5 @@
-export interface LessonCreateDTO{
+export interface LessonEditDTO{
+    lessonId: number;
     userId: number;
     subjectId: number;
     schoolYear: number;

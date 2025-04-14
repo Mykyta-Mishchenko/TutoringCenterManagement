@@ -11,26 +11,37 @@
         </button>
       </div>
       <div class="boxed-form">
-        <h5>Subscribe this lesson?</h5>
-        <div class="info-container">
-          <div class="bold-text header-style">
-              {{lesson()?.lessonType?.subject?.name}}
+        @if(!isInConflict()){
+          <h5>Subscribe this lesson?</h5>
+          <div class="info-container">
+            <div class="bold-text header-style">
+                {{lesson()?.lessonType?.subject?.name}}
+            </div>
+            <div class="mt-2">
+              <span class="bold-text">Year: </span> {{lesson()!.lessonType.schoolYear}}
+            </div>
+            <div>
+                <span class="bold-text">Time: </span> {{lesson()!.schedule.dayTime | date: 'HH:mm'}}
+            </div>
+            <div>
+                <span class="bold-text">Price: </span> {{lessonPrice()}}
+            </div>
+            @if(isBadRequest()){
+              <div class="alert alert-danger mt-2">
+                Something went wrong. Try to reload page.
+              </div>
+            }
           </div>
-          <div class="mt-2">
-             <span class="bold-text">Year: </span> {{lesson()!.lessonType.schoolYear}}
+          <div class="form-row d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-success mt-2 btn-edit" (click)="subscribe()">
+              Subscribe
+            </button>
           </div>
-          <div>
-              <span class="bold-text">Time: </span> {{lesson()!.schedule.dayTime | date: 'HH:mm'}}
+        } @else {
+          <div class="alert alert-danger mt-2">
+            You can't subscribe this lesson. You already have lesson at this time!
           </div>
-          <div>
-              <span class="bold-text">Price: </span> {{lessonPrice()}}
-          </div>
-      </div>
-        <div class="form-row d-flex justify-content-end">
-          <button type="submit" class="btn btn-outline-success mt-2 btn-edit" (click)="subscribe()">
-            Subscribe
-          </button>
-        </div>
+        }
       </div>
     </div> 
   </div>
