@@ -33,22 +33,16 @@ export class LessonValidatorService {
     }
       
     divisorValidator(): ValidatorFn {
-        return (control: AbstractControl): ValidationErrors | null => {
-            if (control.parent == null) return null;
-            
-          const price = control.value;
-          const maxStudentsControl = control.parent.get('maxStudentsCount');
-      
-          if (!maxStudentsControl) return null;
-      
-          const maxStudents = maxStudentsControl.value;
-      
-          if (maxStudents === 0 || maxStudents == null) return null;
-      
-          return price % maxStudents === 0
-            ? null
-            : { notDivisible: { price, maxStudents } };
-        };
+      return (group: AbstractControl): ValidationErrors | null => {
+        const maxStudents = group.get('maxStudentsCount')?.value;
+        const price = group.get('price')?.value;
+    
+        if (maxStudents == null || price == null || maxStudents === 0) return null;
+    
+        return price % maxStudents === 0
+          ? null
+          : { notDivisible: { price, maxStudents } };
+      };
     }
       
     lessonTimeConflictValidator(editingLessonId: number | null): ValidatorFn {

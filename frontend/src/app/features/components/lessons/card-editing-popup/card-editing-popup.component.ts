@@ -124,11 +124,13 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
     this.form().patchValue({
       subject: this.lesson()?.lessonType.subject.subjectId,
       schoolYear: this.lesson()?.lessonType.schoolYear,
-      maxStudentsCount: this.lesson()?.lessonType.maxStudentsCount,
       day: this.lesson()?.schedule.dayOfWeek,
       hour: this.lesson()?.schedule.dayTime.getHours(),
       minutes: this.lesson()?.schedule.dayTime.getMinutes(),
-      price: this.lesson()?.lessonType.price
+      groupedPriceSettings: {
+        maxStudentsCount: this.lesson()?.lessonType.maxStudentsCount,
+        price: this.lesson()?.lessonType.price
+      }
     })
     this.markAllTouched();
   }
@@ -142,8 +144,8 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
       this.form().controls.schoolYear.valid
   }
   get maxStudentsCountIsValid() {
-    return this.form().controls.maxStudentsCount.touched &&
-      this.form().controls.maxStudentsCount.valid
+    return this.form().controls.groupedPriceSettings.controls.maxStudentsCount.touched &&
+      this.form().controls.groupedPriceSettings.controls.maxStudentsCount.valid
   }
   get dayIsValid() {
     return this.timeIsValid && this.form().controls.day.touched &&
@@ -164,18 +166,18 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
       && this.form().controls.minutes.touched;
   }
   get priceIsValid() {
-    return this.form().controls.price.touched &&
-      this.form().controls.price.valid
+    return this.form().controls.groupedPriceSettings.controls.price.touched &&
+      this.form().controls.groupedPriceSettings.valid
   }
 
   markAllTouched() {
     this.form().controls.subject.markAsTouched(); 
     this.form().controls.schoolYear.markAsTouched(); 
-    this.form().controls.maxStudentsCount.markAsTouched(); 
+    this.form().controls.groupedPriceSettings.controls.maxStudentsCount.markAsTouched(); 
     this.form().controls.day.markAsTouched(); 
     this.form().controls.hour.markAsTouched(); 
     this.form().controls.minutes.markAsTouched(); 
-    this.form().controls.price.markAsTouched(); 
+    this.form().controls.groupedPriceSettings.controls.price.markAsTouched(); 
   }
 
   getCreateLessonDTO(): LessonCreateDTO {
@@ -183,11 +185,11 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
       userId: this.userId(),
       subjectId: this.form().controls.subject.value,
       schoolYear: this.form().controls.schoolYear.value,
-      maxStudentsCount: this.form().controls.maxStudentsCount.value,
+      maxStudentsCount: this.form().controls.groupedPriceSettings.controls.maxStudentsCount.value,
       day: this.form().controls.day.value,
       hour: this.form().controls.hour.value,
       minutes: this.form().controls.minutes.value,
-      price: this.form().controls.price.value
+      price: this.form().controls.groupedPriceSettings.controls.price.value
     } 
   }
 
@@ -197,11 +199,11 @@ export class CardEditingPopupComponent implements OnInit, OnChanges{
       userId: this.userId(),
       subjectId: this.form().controls.subject.value,
       schoolYear: this.form().controls.schoolYear.value,
-      maxStudentsCount: this.form().controls.maxStudentsCount.value,
+      maxStudentsCount: this.form().controls.groupedPriceSettings.controls.maxStudentsCount.value,
       day: this.form().controls.day.value,
       hour: this.form().controls.hour.value,
       minutes: this.form().controls.minutes.value,
-      price: this.form().controls.price.value
+      price: this.form().controls.groupedPriceSettings.controls.price.value
     }
   }
 }

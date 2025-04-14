@@ -50,25 +50,6 @@
             </div>
           }
         </div>
-        <div class="form-group">
-          <label for="studentmaxStudentsCountsCount">Max students count:</label>
-          <select
-            id="maxStudentsCount"
-            class="form-control"
-            formControlName="maxStudentsCount"
-            [class.is-valid]="maxStudentsCountIsValid && form().controls.maxStudentsCount.touched"
-            [class.is-invalid]="!maxStudentsCountIsValid && form().controls.maxStudentsCount.touched"
-                    >
-            @for(num of getRange(1, 5); track num){
-              <option [value]="num">{{num}}</option>
-            }
-          </select>
-          @if(!maxStudentsCountIsValid && form().controls.maxStudentsCount.touched){
-            <div class="invalid-feedback">
-                Please provide correct max students count.
-            </div>
-          }
-        </div>
         <div class="form-row">
           <div class="form-group col">
             <label for="day">Day:</label>
@@ -137,20 +118,41 @@
             </div>
           }
         </div>
-        <div class="form-group">
-          <label for="price">Price: </label>
-          <input 
-              type="text" 
-              class="form-control" 
-              [class.is-valid]="priceIsValid"
-              [class.is-invalid]="!priceIsValid && form().controls.price.touched"
-              id="price" 
-              formControlName="price">
-              @if(!priceIsValid && (form().controls.price.touched || form().controls.maxStudentsCount.touched)){
-                  <div class="invalid-feedback">
-                      Please provide correct price. It's should be in range 0 to 1000 and must be divided into 5 and max students count!
-                  </div>
+        <div formGroupName="groupedPriceSettings">
+          <div class="form-group">
+            <label for="studentmaxStudentsCountsCount">Max students count:</label>
+            <select
+              id="maxStudentsCount"
+              class="form-control"
+              formControlName="maxStudentsCount"
+              [class.is-valid]="maxStudentsCountIsValid && form().controls.groupedPriceSettings.touched"
+              [class.is-invalid]="!maxStudentsCountIsValid && form().controls.groupedPriceSettings.touched"
+                      >
+              @for(num of getRange(1, 5); track num){
+                <option [value]="num">{{num}}</option>
               }
+            </select>
+            @if(!maxStudentsCountIsValid && form().controls.groupedPriceSettings.touched){
+              <div class="invalid-feedback">
+                  Please provide correct max students count.
+              </div>
+            }
+          </div>
+          <div class="form-group">
+            <label for="price">Price: </label>
+            <input 
+                type="text" 
+                class="form-control" 
+                [class.is-valid]="priceIsValid"
+                [class.is-invalid]="!priceIsValid && form().controls.groupedPriceSettings"
+                id="price" 
+                formControlName="price">
+                @if(!priceIsValid && form().controls.groupedPriceSettings.touched){
+                    <div class="invalid-feedback">
+                        Please provide correct price. It's should be in range 0 to 1000 and must be divided into 5 and max students count!
+                    </div>
+                }
+          </div>
         </div>
         <div class="form-group">
           <input type="hidden" class="is-invalid" />

@@ -5,11 +5,14 @@ import { inject, Injectable, input, signal } from "@angular/core";
 export interface FormModel {
     subject: FormControl<number>,
     schoolYear: FormControl<number>
-    maxStudentsCount: FormControl<number>,
     day: FormControl<number>,
     hour: FormControl<number>,
     minutes: FormControl<number>,
-    price: FormControl<number>
+    groupedPriceSettings: FormGroup<{
+        maxStudentsCount: FormControl<number>,
+        price: FormControl<number>
+    }>
+    
 }
 
 @Injectable({
@@ -31,10 +34,6 @@ export class LessonForm{
                 nonNullable: true,
                 validators: [Validators.required, Validators.min(1), Validators.max(12), this.validatorService.wholeNumberValidator()]
             }),
-            maxStudentsCount: new FormControl<number>(1, {
-                nonNullable: true,
-                validators: [Validators.required, Validators.min(1), Validators.max(5), this.validatorService.wholeNumberValidator()]
-            }),
             day: new FormControl<number>(1, {
                 nonNullable: true,
                 validators: [Validators.required, Validators.min(1), Validators.max(7), this.validatorService.wholeNumberValidator()]
@@ -48,11 +47,18 @@ export class LessonForm{
                 validators: [Validators.required, Validators.min(0), Validators.max(60),
                 this.validatorService.stepValidator(5), this.validatorService.wholeNumberValidator()]
             }),
-            price: new FormControl<number>(0, {
-                nonNullable: true,
-                validators: [Validators.required, Validators.min(0), Validators.max(5000),
-                this.validatorService.stepValidator(5), this.validatorService.wholeNumberValidator(),
-                this.validatorService.divisorValidator()]
+            groupedPriceSettings: new FormGroup<any>({
+                maxStudentsCount: new FormControl<number>(1, {
+                  nonNullable: true,
+                  validators: [Validators.required, Validators.min(1), Validators.max(5), this.validatorService.wholeNumberValidator()]
+                }),
+                price: new FormControl<number>(0, {
+                  nonNullable: true,
+                  validators: [Validators.required, Validators.min(0), Validators.max(5000),
+                    this.validatorService.stepValidator(5), this.validatorService.wholeNumberValidator()]
+                }),
+              }, {
+                validators: [this.validatorService.divisorValidator()]
             })
         }, {
             validators: [this.validatorService.lessonTimeConflictValidator(this.lessonId())]
