@@ -1,0 +1,113 @@
+.list-header{
+    background-color: #ffffff;
+    padding:0.5rem;
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.2);
+  }
+  
+  .bordered-list{
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    overflow: hidden;
+    height: 76vh;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.2);
+  }
+
+.switcher-container {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 0.7rem;
+  }
+  
+  .switcher input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+  }
+  
+  .slider {
+    position: relative;
+    cursor: pointer;
+    width: 7rem;
+    height: 2rem;
+    background-color: #28A745;
+    transition: .4s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.5rem;
+    overflow: hidden;
+  }
+  
+  .slider-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.3s;
+    left: 0;
+  }
+  
+  input:not(:checked) + .slider .slider-text {
+    transform: translateX(1rem);
+  }
+  
+  input:checked + .slider .slider-text {
+    transform: translateX(-1rem);
+  }
+  
+  /* Slider knob */
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 1.5rem;
+    width: 1.5rem;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+  }
+  
+  /* Checked state */
+  input:checked + .slider {
+    background-color: #127bd1;
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(5rem);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 24px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
+  
+  /* Focus state */
+  input:focus + .slider {
+    box-shadow: 0 0 1px #0d68b2;
+  }
+  
+  /* Label styling */
+  .switcher-label {
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    color: #333;
+  }
+.btn-long{
+    min-width: 10rem;
+}
+.btn-create{
+    font-size: 1rem;
+    font-weight: bold;
+}

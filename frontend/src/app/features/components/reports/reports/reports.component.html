@@ -1,0 +1,64 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between list-header">
+            @if(isStandartView()){
+                <button class="btn btn-outline-success btn-long btn-create" (click)="onReportCreate()" *hasRole="'teacher'">
+                    <i class="bi bi-plus-lg"></i> 
+                    Create new
+                </button>
+            <div class="input-group mb-3 col-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white">
+                      <i class="bi bi-search"></i>
+                    </span>
+                </div>
+                <select class="form-control" #userSelect>
+                    <option value="">Select</option>
+                      @for(user of searchUsers(); track user.userId){
+                        <option [value]="user.userId">{{user.fullName}}</option>
+                      }
+                  </select>
+                <button class="btn btn-outline-success my-2 my-sm-0" (click)="onSearch(userSelect.value)">Search</button>    
+            </div>
+            }@else{<div></div>}
+            <div class="switcher-container">
+                <label class="switcher">
+                  <input type="checkbox"
+                         (change)="onSwitcherChange($event)"
+                         [checked]="!isStandartView()">
+                  <span class="slider round">
+                    <span class="slider-text">{{ viewName() }}</span>
+                  </span>
+                </label>
+              </div>
+        </div>
+        <div class="bordered-list">
+            @if(isStandartView()){
+                <app-reports-list  [reports]="reports()" (editReport)="onReportEdit($event)"></app-reports-list>
+            }
+            @else {
+                <app-reports-analytics></app-reports-analytics>
+            }
+        </div>
+        @if(isStandartView()){
+            <div class="d-flex justify-content-center mt-2">
+                <app-pagination 
+                [page]="page()"
+                [totalPages]="total()"
+                [perPage]="perPage()"
+                [pagesToShow] ="limit()"
+                (goPage)="goToPage($event)"
+                (goPrev) = "goToPrevious()"
+                (goNext)="goToNext()"
+                ></app-pagination>
+              </div>
+        }
+    </div>
+</div>
+<div *hasRole="'teacher'">
+    <app-report-maker
+    [reportId]="selectedReportId()"
+    [show]="reportMakerShow()"
+    (close)="onReportMakerClose()"
+    ></app-report-maker>
+</div>

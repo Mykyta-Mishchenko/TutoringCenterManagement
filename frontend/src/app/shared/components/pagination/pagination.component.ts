@@ -10,7 +10,7 @@ import { Component, input, output } from '@angular/core';
 })
 export class PaginationComponent {
   page = input.required<number>();
-  count = input.required<number>();
+  totalPages = input.required<number>();
   perPage = input.required<number>();
   pagesToShow = input<number>();
   loading = input<boolean>();
@@ -31,16 +31,12 @@ export class PaginationComponent {
     this.goPage.emit(n);
   }
 
-  totalPages(): number{
-    return Math.ceil(this.count() / this.perPage()) || 0;
-  }
-
   isLastPage(): boolean{
-    return this.perPage() * this.page() >= this.count();
+    return this.page() >= this.totalPages();
   }
 
   getPages(): number[] {
-    const totalPages = Math.ceil(this.count() / this.perPage());
+    const totalPages = this.totalPages();
     const thisPage = this.page() || 1;
     const pagesToShow = this.pagesToShow() || 1;
     const pages: number[] = [];
@@ -61,13 +57,5 @@ export class PaginationComponent {
     }
     pages.sort((a, b) => a - b);
     return pages;
-  }
-
-  getMax() {
-    let max = this.perPage() * this.page();
-    if (max > this.count()) {
-      max = this.count();
-    }
-    return max;
   }
 }

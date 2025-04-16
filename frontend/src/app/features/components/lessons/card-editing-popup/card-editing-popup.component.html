@@ -164,9 +164,9 @@
         </div>
         <div class="form-row d-flex justify-content-between mt-2 px-1">
           @if(isEditing()){
-            <button (click)="onDelete()" class="btn btn-outline-danger btn-edit">Delete</button>
+            <button (click)="onDelete()" class="btn btn-outline-danger btn-long">Delete</button>
           }
-          <button (click)="onSubmit()" class="btn btn-outline-success btn-edit">
+          <button (click)="onSubmit()" class="btn btn-outline-success btn-long">
             @if(isEditing()){Edit}
             @else {Create}
           </button>

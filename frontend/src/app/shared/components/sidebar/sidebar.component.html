@@ -6,15 +6,6 @@
         <a class="nav-link" routerLink="/profile" [queryParams]="{userId: userId}">{{userRole()}} Profile</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" routerLink="/schedule/student">Student Schedule</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" routerLink="/reports/maker">Report Maker</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" routerLink="/reports/teacher">Teacher Reports</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" routerLink="/reports/student">Student Reports</a>
+        <a class="nav-link" routerLink="/reports">{{userRole()}} Reports</a>
     </li>
 </ul>

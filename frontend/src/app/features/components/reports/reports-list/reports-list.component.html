@@ -1,0 +1,42 @@
+<div class="table-container">
+    <table class="table table-hover table-light table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col" *hasRole="'student'">Teacher name</th>
+            <th scope="col" *hasRole="'teacher'">Student name</th>
+            <th scope="col">Description</th>
+            @for(mark of markTypes(); track mark.typeId){
+                <th scope="col">{{ mark.name }}</th>
+            }
+            <th scope="col" *hasRole="'teacher'"></th>
+          </tr>
+        </thead>
+        <tbody>
+            @for (report of reports(); track report.reportId) {
+                <tr>
+                    <td>
+                        {{ report.date | date : "YY/MM/dd hh:mm"}}
+                    </td>
+                    <td class="align-middle">
+                        <span *hasRole="'teacher'"> {{report.studentFullName}} </span>
+                        <span *hasRole="'student'"> {{report.teacherFullName}} </span>
+                    </td>
+                    <td>
+                        {{ report.description }}
+                    </td>
+                    @for(mark of markTypes(); track mark.typeId){
+                        <td>
+                            {{getMarkValue(report,mark.typeId)}}
+                        </td>
+                    }
+                    <td class="align-middle" *hasRole="'teacher'">
+                        <button class="btn btn-outline-warning" (click)="onReportClick(report.reportId)">
+                            <i class="bi bi-pen" ></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+      </table>
+</div>

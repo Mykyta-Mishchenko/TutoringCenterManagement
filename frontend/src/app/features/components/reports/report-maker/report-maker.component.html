@@ -1,0 +1,88 @@
+<div class="modal fade show d-block" tabindex="-1" role="dialog" *ngIf="show()" style="background-color: rgba(0,0,0,0.5);"
+  (click)="closeModal()">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          @if(isAdding()){ Create report }
+          @else { Edit lesson description }
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="boxed-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+          <label for="date">Date:</label>
+          <input type="date"
+                 class="form-control"
+                 [class.is-valid]="dateControl?.valid && dateControl?.touched"
+                 [class.is-invalid]="dateControl?.invalid && dateControl?.touched"
+                 formControlName="date"
+                 [attr.min]="minDateStr()"
+                 [attr.max]="maxDateStr()">
+          <div class="invalid-feedback" *ngIf="dateControl?.invalid && dateControl?.touched">
+            Date is required and must be between {{ minDateStr() }} and {{ maxDateStr() }}.
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <label for="studentId">Student:</label>
+          <select formControlName="studentId"
+                  class="form-control"
+                  [class.is-valid]="studentIdControl?.valid && studentIdControl?.touched"
+                  [class.is-invalid]="studentIdControl?.invalid && studentIdControl?.touched"
+                  [disabled]="!isAdding()">
+            @for(student of students(); track student.userId){
+              <option [value]="student.userId">{{ student.fullName }}</option>
+            }
+          </select>
+          <div class="invalid-feedback" *ngIf="studentIdControl?.invalid && studentIdControl?.touched">
+            Please select a student.
+          </div>
+        </div>
+      
+        <div formArrayName="marks" class="row">
+          @for(markGroup of marksArray.controls; track $index){
+            <div [formGroupName]="$index" class="form-group mb-2 col">
+              <label>{{ getMarkType(markGroup.get('markType')?.value) }}</label>
+              <select formControlName="markValue"
+                      class="form-control"
+                      [class.is-valid]="markGroup.get('markValue')?.valid && markGroup.get('markValue')?.touched"
+                      [class.is-invalid]="markGroup.get('markValue')?.invalid && markGroup.get('markValue')?.touched"
+                      [disabled]="!isAdding()">
+                @for(num of getRange(0,10); track num){
+                  <option [value]="num">{{ num }}</option>
+                }
+              </select>
+              <div class="invalid-feedback" *ngIf="markGroup.get('markValue')?.invalid && markGroup.get('markValue')?.touched">
+                Mark must be between 0 and 10.
+              </div>
+            </div>
+          }
+        </div>
+      
+        <div class="form-group">
+          <label>Description: </label>
+          <textarea class="form-control"
+                    formControlName="description"
+                    rows="5"
+                    [class.is-valid]="descriptionControl?.valid && descriptionControl?.touched"
+                    [class.is-invalid]="descriptionControl?.invalid && descriptionControl?.touched">
+          </textarea>
+          <div class="invalid-feedback" *ngIf="descriptionControl?.invalid && descriptionControl?.touched">
+            Description is required and must not exceed 500 characters.
+          </div>
+        </div>
+      
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-outline-success btn-long" [disabled]="form.invalid">
+            @if(isAdding()){Create}
+            @else{Edit}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

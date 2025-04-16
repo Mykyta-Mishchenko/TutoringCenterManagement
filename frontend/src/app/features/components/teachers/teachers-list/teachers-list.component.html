@@ -24,7 +24,7 @@
         <div class="d-flex justify-content-center mt-2">
           <app-pagination 
           [page]="page()"
-          [count]="total()"
+          [totalPages]="total()"
           [perPage]="perPage()"
           [pagesToShow] ="limit()"
           (goPage)="goToPage($event)"
