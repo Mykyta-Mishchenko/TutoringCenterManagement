@@ -18,11 +18,6 @@ namespace Jwtbackend.Configurations
 
             builder.HasIndex(r => r.Name).IsUnique();
 
-            builder.HasMany(r => r.Roles)
-                .WithOne(r => r.Role)
-                .HasForeignKey(r => r.RoleId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             builder.ToTable("Roles");
         }
     }

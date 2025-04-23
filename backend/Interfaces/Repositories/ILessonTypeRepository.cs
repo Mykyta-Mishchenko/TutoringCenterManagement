@@ -4,7 +4,8 @@ namespace backend.Interfaces.Repositories
 {
     public interface ILessonTypeRepository
     {
-        public Task<LessonType> CreateLessonType(LessonType lessonType);
-        public Task<LessonType?> GetLessonType(LessonType lessonType);
+        public Task<LessonType> CreateLessonTypeAsync(LessonType lessonType);
+
+        public Task<LessonType?> GetLessonTypeAsync(LessonType lessonType);
     }
 }

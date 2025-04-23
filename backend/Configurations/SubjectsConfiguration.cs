@@ -14,10 +14,6 @@ namespace backend.Configurations
 
             builder.Property(s => s.SubjectName).HasMaxLength(50).IsRequired();
 
-            builder.HasMany(s => s.LessonTypes)
-                .WithOne(l => l.Subject)
-                .HasForeignKey(l => l.SubjectId);
-
             builder.ToTable("Subjects");
         }
     }

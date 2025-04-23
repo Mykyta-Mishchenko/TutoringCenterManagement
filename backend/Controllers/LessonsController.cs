@@ -31,7 +31,7 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetUserSubjects([FromQuery]int userId)
         {
-            var lessons = await _lessonsService.GetUserLessons(userId);
+            var lessons = await _lessonsService.GetUserLessonsAsync(userId);
 
             if(lessons == null)
             {

@@ -18,6 +18,9 @@ namespace JwtBackend.Data
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<LessonType> LessonTypes { get; set; }
         public DbSet<Subject> Subjects { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<Mark> Marks { get; set; }
+        public DbSet<MarkType> MarkTypes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

@@ -18,10 +18,6 @@ namespace backend.Configurations
 
             builder.HasCheckConstraint("CK_Schedule_DayOfWeek", "[DayOfWeek] >= 1 AND [DayOfWeek] <= 7");
 
-            builder.HasMany(s => s.Lessons)
-                .WithOne(s => s.Schedule)
-                .HasForeignKey(l => l.ScheduleId);
-
             builder.ToTable("Schedules");
         }
     }

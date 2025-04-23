@@ -1,5 +1,6 @@
 ﻿using backend.Data.DataModels;
 using backend.Interfaces.Repositories;
+using backend.Models;
 using JwtBackend.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ namespace backend.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<Schedule> CreateSchedule(int day, int hour, int minutes)
+        public async Task<Schedule?> CreateScheduleAsync(int day, int hour, int minutes)
         {
             var schedule = new Schedule() { DayOfWeek = day, DayTime = new TimeSpan(hour, minutes, 0) };
             await _dbContext.Schedules.AddAsync(schedule);
@@ -20,13 +21,14 @@ namespace backend.Repositories
             return schedule;
         }
 
-        public void DeleteSchedule(Schedule schedule)
+        public async Task<OperationResult> DeleteScheduleAsync(Schedule schedule)
         {
             _dbContext.Schedules.Remove(schedule);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
+            return OperationResult.Success;
         }
 
-        public async Task<Schedule?> GetSchedule(int day, int hour, int minutes)
+        public async Task<Schedule?> GetScheduleAsync(int day, int hour, int minutes)
         {
             return await _dbContext.Schedules
                 .FirstOrDefaultAsync(s => s.DayOfWeek == day && s.DayTime == new TimeSpan(hour, minutes, 0));

@@ -1,5 +1,6 @@
 ﻿using backend.Data.DataModels;
 using backend.Interfaces.Repositories;
+using backend.Models;
 using JwtBackend.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,32 +14,46 @@ namespace backend.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task CreatetSubject(string name)
+        public async Task<Subject> CreateSubjectAsync(string name)
         {
-            await _dbContext.Subjects.AddAsync(new Subject { SubjectName = name });
+            var subject = new Subject { SubjectName = name };
+            await _dbContext.Subjects.AddAsync(subject);
             await _dbContext.SaveChangesAsync();
+            return subject;
         }
 
-        public async Task DeleteSubject(int subjectId)
+        public async Task<OperationResult> DeleteSubjectAsync(int subjectId)
         {
-            var subject = await GetSubject(subjectId);
-            _dbContext.Subjects.Remove(subject);
-            await _dbContext.SaveChangesAsync();
+            var subject = await GetSubjectAsync(subjectId);
+            if(subject != null)
+            {
+                _dbContext.Subjects.Remove(subject);
+                await _dbContext.SaveChangesAsync();
+                return OperationResult.Success;
+            }
+
+            return OperationResult.Failure;
         }
 
-        public async Task DeleteSubject(string name)
+        public async Task<OperationResult> DeleteSubjectAsync(string name)
         {
-            var subject = await GetSubject(name);
-            _dbContext.Subjects.Remove(subject);
-            await _dbContext.SaveChangesAsync();
+            var subject = await GetSubjectAsync(name);
+            if (subject != null)
+            {
+                _dbContext.Subjects.Remove(subject);
+                await _dbContext.SaveChangesAsync();
+                return OperationResult.Success;
+            }
+
+            return OperationResult.Failure;
         }
 
-        public async Task<Subject?> GetSubject(int subjectId)
+        public async Task<Subject?> GetSubjectAsync(int subjectId)
         {
             return await _dbContext.Subjects.FirstOrDefaultAsync(s => s.SubjectId == subjectId);
         }
 
-        public async Task<Subject?> GetSubject(string name)
+        public async Task<Subject?> GetSubjectAsync(string name)
         {
             return await _dbContext.Subjects.FirstOrDefaultAsync(s => s.SubjectName == name);
         }

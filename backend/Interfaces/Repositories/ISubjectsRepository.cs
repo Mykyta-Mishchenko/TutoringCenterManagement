@@ -1,13 +1,14 @@
 ﻿using backend.Data.DataModels;
+using backend.Models;
 
 namespace backend.Interfaces.Repositories
 {
     public interface ISubjectsRepository
     {
-        public Task CreatetSubject(string name);
-        public Task<Subject?> GetSubject(int subjectId);
-        public Task<Subject?> GetSubject(string name);
-        public Task DeleteSubject(int subjectId);
-        public Task DeleteSubject(string name);
+        public Task<Subject?> CreateSubjectAsync(string name);
+        public Task<Subject?> GetSubjectAsync(int subjectId);
+        public Task<Subject?> GetSubjectAsync(string name);
+        public Task<OperationResult> DeleteSubjectAsync(int subjectId);
+        public Task<OperationResult> DeleteSubjectAsync(string name);
     }
 }

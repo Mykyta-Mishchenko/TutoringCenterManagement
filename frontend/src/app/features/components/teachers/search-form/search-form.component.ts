@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, output, signal, Signal } from '@angular/core';
+import { Component, inject, OnInit, output, signal } from '@angular/core';
 import { Subject } from '../../../../shared/models/subject.model';
 import { form as reactiveForm } from './search.reactive-form';
 import { LessonService } from '../../../services/lesson.service';

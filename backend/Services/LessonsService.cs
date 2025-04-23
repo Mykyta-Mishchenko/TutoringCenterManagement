@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using backend.Data.DataModels;
 using backend.DTO.LessonsDTO;
+using backend.DTO.ReportsDTO;
 using backend.Interfaces.Repositories;
 using backend.Interfaces.Services;
 using backend.Models;
@@ -36,17 +37,85 @@ namespace backend.Services
             _lessonTypeRepository = lessonTypeRepository;
         }
 
+        public async Task<OperationResult> CreateTeacherLessonAsync(int userId, LessonCreateDTO lesson)
+        {
+            var (result, teacherLesson) = await BuildTeacherLessonAsync(lesson);
+
+            if (result == OperationResult.Failure || teacherLesson == null)
+            {
+                return OperationResult.Failure;
+            }
+
+            var crossingLesson = await _lessonsRepository.GetCrossingTeacherLessonAsync(teacherLesson);
+
+            if (crossingLesson != null)
+            {
+                return OperationResult.Failure;
+            }
+
+            var dbLesson = await _lessonsRepository.CreateTeacherLessonAsync(teacherLesson);
+
+            if (dbLesson == null)
+            {
+                return OperationResult.Failure;
+            }
+
+            return OperationResult.Success;
+        }
+
+        public async Task<OperationResult> CreateStudentLessonAsync(int userId, int lessonId)
+        {
+            var dbUser = await _usersService.GetUser(userId);
+            var dbStudentLesson = await _lessonsRepository.GetStudentLessonAsync(userId, lessonId);
+
+            if (dbUser == null || dbStudentLesson != null)
+            {
+                return OperationResult.Failure;
+            }
+
+            var dbTeacherLesson = await _lessonsRepository.GetTeacherLessonAsync(lessonId);
+
+            if (dbTeacherLesson == null)
+            {
+                return OperationResult.Failure;
+            }
+
+            var newStudentLesson = new StudentLesson()
+            {
+                StudentId = userId,
+                LessonId = lessonId,
+                TeacherLesson = dbTeacherLesson
+            };
+
+            var crossingLesson = await _lessonsRepository.GetCrossingStudentLessonAsync(newStudentLesson);
+
+            if (crossingLesson != null)
+            {
+                return OperationResult.Failure;
+            }
+
+            dbStudentLesson = await _lessonsRepository.CreateStudentLessonAsync(newStudentLesson);
+
+            if (dbStudentLesson == null)
+            {
+                return OperationResult.Failure;
+            }
+
+            return OperationResult.Success;
+
+        }
+
         public async Task<IList<SubjectDTO>> GetAllSubjectsAsync()
         {
             var subjects = await _lessonsRepository.GetAllSubjectsAsync();
             return _mapper.Map<List<SubjectDTO>>(subjects);
         }
-        public async Task<IList<LessonDTO>> GetUserLessons(int userId)
+        public async Task<IList<LessonDTO>> GetUserLessonsAsync(int userId)
         {
             var userRoles = await _roleRepository.GetUserRolesAsync(userId);
-            var entityRole = userRoles.Where(ur =>
+            var entityRole = userRoles.First(ur =>
                 ur.Name == UserRole.teacher.ToString() ||
-                ur.Name == UserRole.student.ToString()).First();
+                ur.Name == UserRole.student.ToString());
 
             if (entityRole == null)
                 return null;
@@ -71,43 +140,14 @@ namespace backend.Services
             return null;
         }
 
-        public async Task<OperationResult> CreateTeacherLessonAsync(int userId, LessonCreateDTO lesson)
+        public async Task<IList<SearchUserDTO>> GetTeacherStudentsAsync(int teacherId)
         {
-            var (result, teacherLesson) = await BuildTeacherLessonAsync(lesson);
-
-            if (result == OperationResult.Failure || teacherLesson == null)
-            {
-                return OperationResult.Failure;
-            }
-
-            var crossingLesson = await _lessonsRepository.GetCrossingTeacherLessonAsync(teacherLesson);
-
-            if(crossingLesson != null)
-            {
-                return OperationResult.Failure;
-            }
-
-            var dbLesson = await _lessonsRepository.CreateTeacherLessonAsync(teacherLesson);
-
-            if(dbLesson == null)
-            {
-                return OperationResult.Failure;
-            }
-
-            return OperationResult.Success;
+            return await _lessonsRepository.GetTeacherStudentsAsync(teacherId);
         }
 
-        public async Task<OperationResult> DeleteTeacherLessonAsync(int teacherId, int lessonId)
+        public async Task<IList<SearchUserDTO>> GetStudentTeachersAsync(int studentId)
         {
-            var lesson = await _lessonsRepository.GetTeacherLessonAsync(lessonId);
-
-            if (lesson != null && lesson.TeacherId == teacherId)
-            {
-                _lessonsRepository.DeleteTeacherLesson(lesson);
-                return OperationResult.Success;
-            }
-
-            return OperationResult.Failure;
+            return await _lessonsRepository.GetStudentTeachersAsync(studentId);
         }
 
         public async Task<OperationResult> UpdateTeacherLessonAsync(int userId, LessonEditDTO lesson)
@@ -123,14 +163,14 @@ namespace backend.Services
 
             var crossingLesson = await _lessonsRepository.GetCrossingTeacherLessonAsync(editedTeacherLesson);
 
-            if(crossingLesson != null)
+            if (crossingLesson != null)
             {
                 return OperationResult.Failure;
             }
 
             var dbLesson = await _lessonsRepository.GetTeacherLessonAsync(lesson.LessonId);
 
-            if(dbLesson != null && (
+            if (dbLesson != null && (
                 dbLesson.ScheduleId != editedTeacherLesson.ScheduleId ||
                 dbLesson.TypeId != editedTeacherLesson.TypeId)
               )
@@ -139,7 +179,7 @@ namespace backend.Services
                 dbLesson = await _lessonsRepository.UpdateTeacherLessonAsync(editedTeacherLesson);
             }
 
-            if(dbLesson == null)
+            if (dbLesson == null)
             {
                 return OperationResult.Failure;
             }
@@ -147,9 +187,34 @@ namespace backend.Services
             return OperationResult.Success;
         }
 
+        public async Task<OperationResult> DeleteTeacherLessonAsync(int teacherId, int lessonId)
+        {
+            var lesson = await _lessonsRepository.GetTeacherLessonAsync(lessonId);
+
+            if (lesson != null && lesson.TeacherId == teacherId)
+            {
+                return await _lessonsRepository.DeleteTeacherLessonAsync(lesson);
+            }
+
+            return OperationResult.Failure;
+        }
+
+        public async Task<OperationResult> DeleteStudentLessonAsync(int userId, int lessonId)
+        {
+            var dbUser = await _usersService.GetUser(userId);
+            var dbStudentLesson = await _lessonsRepository.GetStudentLessonAsync(userId, lessonId);
+
+            if(dbUser == null || dbStudentLesson == null)
+            {
+                return OperationResult.Failure;
+            }
+
+            return await _lessonsRepository.DeleteStudentLessonAsync(dbStudentLesson);
+        }
+
         private async Task<(OperationResult Result, TeacherLesson? Lesson)> BuildTeacherLessonAsync(LessonBaseDTO lessonDto)
         {
-            var subject = await _subjectsRepository.GetSubject(lessonDto.SubjectId);
+            var subject = await _subjectsRepository.GetSubjectAsync(lessonDto.SubjectId);
             var user = await _usersService.GetUser(lessonDto.UserId);
 
             if (subject == null || user == null)
@@ -165,11 +230,11 @@ namespace backend.Services
                 Price = lessonDto.Price
             };
 
-            var dbLessonType = await _lessonTypeRepository.GetLessonType(lessonType)
-                               ?? await _lessonTypeRepository.CreateLessonType(lessonType);
+            var dbLessonType = await _lessonTypeRepository.GetLessonTypeAsync(lessonType)
+                               ?? await _lessonTypeRepository.CreateLessonTypeAsync(lessonType);
 
-            var dbSchedule = await _scheduleRepository.GetSchedule(lessonDto.Day, lessonDto.Hour, lessonDto.Minutes)
-                              ?? await _scheduleRepository.CreateSchedule(lessonDto.Day, lessonDto.Hour, lessonDto.Minutes);
+            var dbSchedule = await _scheduleRepository.GetScheduleAsync(lessonDto.Day, lessonDto.Hour, lessonDto.Minutes)
+                              ?? await _scheduleRepository.CreateScheduleAsync(lessonDto.Day, lessonDto.Hour, lessonDto.Minutes);
 
             var teacherLesson = new TeacherLesson()
             {
@@ -180,60 +245,6 @@ namespace backend.Services
             };
 
             return (OperationResult.Success, teacherLesson);
-        }
-
-        public  async Task<OperationResult> CreateStudentLessonAsync(int userId, int lessonId)
-        {
-            var dbUser = await _usersService.GetUser(userId);
-            var dbStudentLesson = await _lessonsRepository.GetStudentLessonAsync(userId, lessonId);
-
-            if(dbUser == null || dbStudentLesson != null)
-            {
-                return OperationResult.Failure;
-            }
-
-            var dbTeacherLesson = await _lessonsRepository.GetTeacherLessonAsync(lessonId);
-
-            if(dbTeacherLesson == null)
-            {
-                return OperationResult.Failure;
-            }
-
-            var newStudentLesson = new StudentLesson()
-            {
-                StudentId = userId,
-                LessonId = lessonId,
-                TeacherLesson = dbTeacherLesson
-            };
-
-            var crossingLesson = await _lessonsRepository.GetCrossingStudentLessonAsync(newStudentLesson);
-
-            if(crossingLesson != null)
-            {
-                return OperationResult.Failure;
-            }
-
-            dbStudentLesson = await _lessonsRepository.CreateStudentLessonAsync(newStudentLesson);
-
-            if(dbStudentLesson == null)
-            {
-                return OperationResult.Failure;
-            }
-
-            return OperationResult.Success;
-            
-        }
-        public async Task<OperationResult> DeleteStudentLessonAsync(int userId, int lessonId)
-        {
-            var dbUser = await _usersService.GetUser(userId);
-            var dbStudentLesson = await _lessonsRepository.GetStudentLessonAsync(userId, lessonId);
-
-            if(dbUser == null || dbStudentLesson == null)
-            {
-                return OperationResult.Failure;
-            }
-
-            return await _lessonsRepository.DeleteStudentLessonAsync(dbStudentLesson);
         }
     }
 }

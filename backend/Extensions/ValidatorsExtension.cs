@@ -19,6 +19,8 @@ namespace backend.Extensions
 
             services.AddValidatorsFromAssemblyContaining<LessonEditDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<LessonCreateDTOValidator>();
+
+            services.AddValidatorsFromAssemblyContaining<ReportsFilterDTOValidator>();
         }
     }
 }

@@ -36,14 +36,11 @@ builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddAuthorization();
 
 
-
+// Application extension methods
 builder.Services.AddApplicationServices();
 builder.Services.AddApplicationRepositories();
-
 builder.Services.AddValidators();
-
-builder.Services.AddAutoMapper(typeof(UserMappingProfile));
-builder.Services.AddAutoMapper(typeof(LessonMappingProfile));
+builder.Services.AddApplicationMappers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

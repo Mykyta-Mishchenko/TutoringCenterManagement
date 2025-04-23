@@ -12,14 +12,14 @@ namespace backend.Repositories
         {
             _dbContext = dbContext;
         } 
-        public async Task<LessonType> CreateLessonType(LessonType lessonType)
+        public async Task<LessonType> CreateLessonTypeAsync(LessonType lessonType)
         {
             await _dbContext.LessonTypes.AddAsync(lessonType);
             await _dbContext.SaveChangesAsync();
             return lessonType;
         }
 
-        public async Task<LessonType?> GetLessonType(LessonType lessonType)
+        public async Task<LessonType?> GetLessonTypeAsync(LessonType lessonType)
         {
             return await _dbContext.LessonTypes
                 .FirstOrDefaultAsync(

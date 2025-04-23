@@ -1,9 +1,12 @@
 #teachersDashboard{
     display: grid;
     grid-template-columns: repeat(5,1fr);
-    overflow-y: scroll;
-    max-height: 78vh;
     padding: 2rem;
+}
+
+.card-list{
+    overflow-y: scroll;
+    height: 78vh;
 }
 
 @media( max-width: 1440px){

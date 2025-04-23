@@ -56,6 +56,44 @@ namespace backend.Migrations
                         });
                 });
 
+            modelBuilder.Entity("backend.Data.DataModels.Mark", b =>
+                {
+                    b.Property<int>("ReportId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MarkTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReportId", "MarkTypeId");
+
+                    b.HasIndex("MarkTypeId");
+
+                    b.ToTable("Marks", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Marks_Score", "[Score] >= 1 AND [Score] <= 10");
+                        });
+                });
+
+            modelBuilder.Entity("backend.Data.DataModels.MarkType", b =>
+                {
+                    b.Property<int>("TypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TypeId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TypeId");
+
+                    b.ToTable("MarksTypes", (string)null);
+                });
+
             modelBuilder.Entity("backend.Data.DataModels.RefreshSession", b =>
                 {
                     b.Property<int>("SessionId")
@@ -83,6 +121,32 @@ namespace backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshSessions", (string)null);
+                });
+
+            modelBuilder.Entity("backend.Data.DataModels.Report", b =>
+                {
+                    b.Property<int>("ReportId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("LessonId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReportId");
+
+                    b.HasIndex("LessonId");
+
+                    b.ToTable("Reports", (string)null);
                 });
 
             modelBuilder.Entity("backend.Data.DataModels.Role", b =>
@@ -130,13 +194,21 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Data.DataModels.StudentLesson", b =>
                 {
+                    b.Property<int>("StudentLessonId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentLessonId"));
+
                     b.Property<int>("LessonId")
                         .HasColumnType("int");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.HasKey("LessonId", "StudentId");
+                    b.HasKey("StudentLessonId");
+
+                    b.HasIndex("LessonId");
 
                     b.HasIndex("StudentId");
 
@@ -266,6 +338,25 @@ namespace backend.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("backend.Data.DataModels.Mark", b =>
+                {
+                    b.HasOne("backend.Data.DataModels.MarkType", "MarkType")
+                        .WithMany("Marks")
+                        .HasForeignKey("MarkTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("backend.Data.DataModels.Report", "Report")
+                        .WithMany("Marks")
+                        .HasForeignKey("ReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MarkType");
+
+                    b.Navigation("Report");
+                });
+
             modelBuilder.Entity("backend.Data.DataModels.RefreshSession", b =>
                 {
                     b.HasOne("backend.Data.DataModels.User", "User")
@@ -275,6 +366,17 @@ namespace backend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Data.DataModels.Report", b =>
+                {
+                    b.HasOne("backend.Data.DataModels.StudentLesson", "StudentLesson")
+                        .WithMany("Reports")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudentLesson");
                 });
 
             modelBuilder.Entity("backend.Data.DataModels.StudentLesson", b =>
@@ -301,7 +403,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Data.DataModels.Schedule", "Schedule")
                         .WithMany("Lessons")
                         .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("backend.Data.DataModels.User", "User")
@@ -313,7 +415,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Data.DataModels.LessonType", "LessonType")
                         .WithMany("Lessons")
                         .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("LessonType");
@@ -358,6 +460,16 @@ namespace backend.Migrations
                     b.Navigation("Lessons");
                 });
 
+            modelBuilder.Entity("backend.Data.DataModels.MarkType", b =>
+                {
+                    b.Navigation("Marks");
+                });
+
+            modelBuilder.Entity("backend.Data.DataModels.Report", b =>
+                {
+                    b.Navigation("Marks");
+                });
+
             modelBuilder.Entity("backend.Data.DataModels.Role", b =>
                 {
                     b.Navigation("Roles");
@@ -366,6 +478,11 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Data.DataModels.Schedule", b =>
                 {
                     b.Navigation("Lessons");
+                });
+
+            modelBuilder.Entity("backend.Data.DataModels.StudentLesson", b =>
+                {
+                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("backend.Data.DataModels.Subject", b =>

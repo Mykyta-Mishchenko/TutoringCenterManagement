@@ -87,7 +87,7 @@ namespace backend.Services
                     await image.SaveAsync(fileStream, new PngEncoder());
                 }
             }
-            await _userRepository.SetUserProfileAsync(userId, filePath);
+            await _userRepository.CreateUserProfileAsync(userId, filePath);
             return filePath;
         }
     }

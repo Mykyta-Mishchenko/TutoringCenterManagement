@@ -1,5 +1,6 @@
 ﻿using backend.Data.DataModels;
 using backend.Interfaces.Repositories;
+using backend.Models;
 using JwtBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -13,25 +14,30 @@ namespace JwtBackend.Repositories
         {
             _identityDbContext = identityDbContext;
         }
-        public async Task CreateRoleAsync(string roleName)
+        public async Task<Role?> CreateRoleAsync(string roleName)
         {
-            await _identityDbContext.Roles.AddAsync(new Role { Name = roleName});
+            var role = new Role { Name = roleName };
+            await _identityDbContext.Roles.AddAsync(role);
             await _identityDbContext.SaveChangesAsync();
+            return role;
         }
 
-        public void DeleteRole(string roleName)
+        public async Task<OperationResult> DeleteRoleAsync(string roleName)
         {
-            var dbRole = _identityDbContext.Roles.FirstOrDefault(r => r.Name == roleName);
+            var dbRole = await _identityDbContext.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
             if (dbRole != null)
             {
                 _identityDbContext.Roles.Remove(dbRole);
-                _identityDbContext.SaveChanges();
+                await _identityDbContext.SaveChangesAsync();
+                return OperationResult.Success;
             }
+
+            return OperationResult.Success;
         }
 
-        public bool IsRoleExists(string roleName)
+        public async Task<bool> IsRoleExistsAsync(string roleName)
         {
-            return _identityDbContext.Roles.FirstOrDefault(r => r.Name == roleName) != null;
+            return (await _identityDbContext.Roles.FirstOrDefaultAsync(r => r.Name == roleName)) != null;
         }
 
         public async Task<IList<Role>> GetRolesAsync()
@@ -60,7 +66,7 @@ namespace JwtBackend.Repositories
                 .ToListAsync();
         }
 
-        public async Task GiveUserRoleAsync(User user, string roleName)
+        public async Task<UserRoles?> CreateUserRoleAsync(User user, string roleName)
         {
             var dbRole = await _identityDbContext.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
             var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
@@ -73,24 +79,29 @@ namespace JwtBackend.Repositories
                     var userRole = new UserRoles() { UserId = dbUser.UserId, RoleId = dbRole.RoleId };
                     await _identityDbContext.UsersRoles.AddAsync(userRole);
                     await _identityDbContext.SaveChangesAsync();
+                    return userRole;
                 }
             }
+
+            return null;
         }
 
-        public void RemoveUserRole(User user, string roleName)
+        public async Task<OperationResult> DeleteUserRoleAsync(User user, string roleName)
         {
-            var dbRole = _identityDbContext.Roles.FirstOrDefault(r => r.Name == roleName);
-            var dbUser = _identityDbContext.Users.FirstOrDefault(u => u.Email == user.Email);
+            var dbRole = await _identityDbContext.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+            var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if (dbRole != null && dbUser != null)
             {
-                var dbUserRole = _identityDbContext.UsersRoles
-                .FirstOrDefault(ur => (ur.UserId == dbUser.UserId && ur.RoleId == dbRole.RoleId));
+                var dbUserRole = await _identityDbContext.UsersRoles
+                .FirstOrDefaultAsync(ur => (ur.UserId == dbUser.UserId && ur.RoleId == dbRole.RoleId));
                 if (dbUserRole != null)
                 {
                     _identityDbContext.UsersRoles.Remove(dbUserRole);
-                    _identityDbContext.SaveChanges();
+                    await _identityDbContext.SaveChangesAsync();
+                    return OperationResult.Success;
                 }
             }
+            return OperationResult.Failure;
         }
     }
 }

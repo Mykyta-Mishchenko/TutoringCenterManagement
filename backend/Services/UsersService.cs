@@ -39,9 +39,9 @@ namespace backend.Services
         public async Task<UserRole?> GetUserRole(int userId)
         {
             var userRoles = await _rolesRepository.GetUserRolesAsync(userId);
-            var role =  userRoles.Where(ur => 
-                ur.Name == UserRole.teacher.ToString() || 
-                ur.Name == UserRole.student.ToString()).First();
+            var role =  userRoles.First(ur =>
+                ur.Name == UserRole.teacher.ToString() ||
+                ur.Name == UserRole.student.ToString());
 
             if (role == null)
                 return null;

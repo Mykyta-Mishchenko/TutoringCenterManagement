@@ -40,10 +40,17 @@ export class ReportMakerComponent implements OnChanges, OnInit{
   isAdding = computed(() => this.reportId() === null);
 
   ngOnInit(): void {
-    this.markTypes.set(this.reportsService.getMarkTypes());
-    this.students.set(this.reportsService.getTeacherStudents(this.teacherId));
-
-    this.setForm();
+    this.reportsService.getMarkTypes().subscribe({
+      next: (markTypes) => {
+        this.markTypes.set(markTypes);    
+      }
+    })
+    this.reportsService.getTeacherStudents(this.teacherId).subscribe({
+      next: (students) => {
+        this.students.set(students);
+        this.setForm();
+      }
+    })
   }
 
   ngOnChanges(): void {
@@ -122,7 +129,7 @@ export class ReportMakerComponent implements OnChanges, OnInit{
     this.form = new FormGroup({
       date: new FormControl<string>(formattedDate,
         { validators: [Validators.required, dateRangeValidator(minDate, maxDate)] }),
-      studentId: new FormControl<number>(this.report()?.studentId ?? this.students()[0].userId,
+      studentId: new FormControl<number | null>(this.report()?.studentId ?? this.students()[0]?.userId,
         { validators: [Validators.required] }),
       marks: new FormArray(this.markTypes().map((mark) =>
         new FormGroup({

@@ -28,10 +28,6 @@ namespace backend.Configurations
                 .WithMany(s => s.LessonTypes)
                 .HasForeignKey(lt => lt.SubjectId);
 
-            builder.HasMany(lt => lt.Lessons)
-                .WithOne(l => l.LessonType)
-                .HasForeignKey(l => l.TypeId);
-
             builder.ToTable("LessonTypes");
         }
     }

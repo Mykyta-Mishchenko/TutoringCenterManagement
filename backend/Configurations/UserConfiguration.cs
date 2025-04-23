@@ -30,26 +30,6 @@ namespace JwtBackend.Configurations
                 .HasColumnType("NVARCHAR(100)")
                 .IsRequired();
 
-            builder.HasMany(u => u.UserRoles)
-                .WithOne(ur => ur.User)
-                .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(u => u.Sessions)
-                .WithOne(s => s.User)
-                .HasForeignKey(s => s.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(u => u.TeacherLessons)
-                .WithOne(u => u.User)
-                .HasForeignKey(l => l.TeacherId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(u => u.StudentLessons)
-                .WithOne(u => u.User)
-                .HasForeignKey(l => l.StudentId)
-                .OnDelete(DeleteBehavior.NoAction);
-
             builder.ToTable("Users");
         }
     }

@@ -5,11 +5,12 @@ import { SearchUserDTO } from '../../../../shared/models/dto/reports-dto/search-
 import { ReportsService } from '../../../services/reports.service';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { ReportDTO } from '../../../../shared/models/dto/reports-dto/report.dto';
-import { StudentsFilter } from '../../../../shared/models/dto/reports-dto/students-filter.dto';
+import { ReportsFilter } from '../../../../shared/models/dto/reports-dto/reports-filter.dto';
 import { ReportMakerComponent } from "../report-maker/report-maker.component";
 import { HasRoleDirective } from '../../../../core/directives/role.directive';
 import { Roles } from '../../../../shared/models/roles.enum';
 import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
+import { ReportsInfoList } from '../../../../shared/models/dto/reports-dto/reports-info-list.dto';
 
 @Component({
   selector: 'app-reports',
@@ -29,13 +30,16 @@ export class ReportsComponent implements OnInit{
   private authService = inject(AuthService);
   private reportsService = inject(ReportsService);
 
+  currentUserRole = computed<Roles>(() => this.authService.User()!.role);
+  currentUserId = computed<number>(() => this.authService.User()!.userId);
+
   isStandartView = signal<boolean>(true);
   viewName = computed(() => this.isStandartView() ? "analytics" : "table");
   searchUsers = signal<SearchUserDTO[]>([]);
   reports = signal<ReportDTO[]>([]);
-  filter = signal<StudentsFilter>({
+  filter = signal<ReportsFilter>({
     ...this.reportsService.BasicStudentsFilter,
-    teacherId: this.authService.User()!.userId
+    teacherId: this.currentUserId()
   });
 
   total = signal<number>(1);
@@ -47,21 +51,44 @@ export class ReportsComponent implements OnInit{
   selectedReportId = signal<number | null>(null);
   reportMakerShow = signal<boolean>(false);
 
-
   ngOnInit(): void {
-    if (this.authService.User()?.role == Roles.Student) {
-      this.searchUsers.set(this.reportsService.getStudentTeachers(this.authService.User()!.userId));      
+    if (this.currentUserRole() == Roles.Student) {
+      this.reportsService.getStudentTeachers(this.currentUserId()).subscribe({
+        next: (teachers) => {
+          this.searchUsers.set(teachers);
+        }
+      })
     }
     else {
-      this.searchUsers.set(this.reportsService.getTeacherStudents(this.authService.User()!.userId));
+      this.reportsService.getTeacherStudents(this.currentUserId()).subscribe({
+        next: (students) => {
+          this.searchUsers.set(students);
+        }
+      })
     }
     this.getReports();
   }
 
   getReports() {
-    const reportsInfo = this.reportsService.getUserReports(this.filter()); 
-    this.reports.set(reportsInfo.reportsList);
-    this.total.set(reportsInfo.totalPageNumber);
+    let reportsInfo: ReportsInfoList = { reportsList: [], totalPageNumber: 0 };
+    if (this.currentUserRole() == Roles.Student) {
+      this.reportsService.getStudentReports(this.filter()).subscribe({
+        next: (reports) => {
+          reportsInfo = reports;
+          this.reports.set(reportsInfo.reportsList);
+          this.total.set(reportsInfo.totalPageNumber);
+        }
+      })
+    }
+    else if (this.currentUserRole() == Roles.Teacher) {
+      this.reportsService.getTeacherReports(this.filter()).subscribe({
+        next: (reports) => {
+          reportsInfo = reports;
+          this.reports.set(reportsInfo.reportsList);
+          this.total.set(reportsInfo.totalPageNumber);
+        }
+      })      
+    }
   }
 
   onSwitcherChange(event: Event) {
@@ -71,20 +98,28 @@ export class ReportsComponent implements OnInit{
 
   onSearch(selectedUserId: string) {
     if (selectedUserId) {
-      const role = this.authService.User()!.role;
+      const role = this.currentUserRole();
       if (role == Roles.Student) {
         this.filter.set({
           ...this.reportsService.BasicStudentsFilter,
+          isSearching: true,
           teacherId: Number(selectedUserId)
         });
       }
       else{
         this.filter.set({
           ...this.reportsService.BasicStudentsFilter,
+          isSearching: true,
           teacherId: Number(selectedUserId)
         });
       }
       this.getReports();
+    }
+    else {
+      this.filter.set({
+        ...this.filter(),
+        isSearching: false
+      })
     }
   }
 

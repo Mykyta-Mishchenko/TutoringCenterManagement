@@ -22,7 +22,11 @@ export class ReportsListComponent implements  OnInit{
   markTypes = signal<MarkType[] | null>(null);
 
   ngOnInit(): void {    
-    this.markTypes.set(this.reportsService.getMarkTypes());
+    this.reportsService.getMarkTypes().subscribe({
+      next: (markTypes) => {
+        this.markTypes.set(markTypes);    
+      }
+    })
   }
 
   getMarkValue(report: ReportDTO, typeId: number): number | null {

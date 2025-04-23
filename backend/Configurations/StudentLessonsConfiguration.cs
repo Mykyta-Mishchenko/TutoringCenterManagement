@@ -8,17 +8,21 @@ namespace backend.Configurations
     {
         public void Configure(EntityTypeBuilder<StudentLesson> builder)
         {
-            builder.HasKey(l => new { l.LessonId, l.StudentId });
+            builder.HasKey(l => l.StudentLessonId);
 
-            builder.ToTable("StudentLessons");
+            builder.Property(l => l.StudentLessonId).ValueGeneratedOnAdd();
+
+            builder.HasIndex(l => l.StudentId);
 
             builder.HasOne(l => l.User)
                 .WithMany(u => u.StudentLessons)
-                .HasForeignKey(l => l.StudentId);
+                .HasForeignKey(l => l.StudentId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(l => l.TeacherLesson)
                 .WithMany(u => u.StudentLessons)
-                .HasForeignKey(l => l.LessonId);
+                .HasForeignKey(l => l.LessonId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("StudentLessons");
         }

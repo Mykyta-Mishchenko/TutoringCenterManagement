@@ -1,5 +1,6 @@
 ﻿using backend.Data.DataModels;
 using backend.DTO.LessonsDTO;
+using backend.DTO.ReportsDTO;
 using backend.Interfaces.Repositories;
 using backend.Models;
 using JwtBackend.Data;
@@ -16,10 +17,11 @@ namespace backend.Repositories
             _identityDbContext = identityDbContext;
         }
 
-        public void DeleteTeacherLesson(TeacherLesson lesson)
+        public async Task<OperationResult> DeleteTeacherLessonAsync(TeacherLesson lesson)
         {
             _identityDbContext.TeacherLessons.Remove(lesson);
-            _identityDbContext.SaveChanges();
+            await _identityDbContext.SaveChangesAsync();
+            return OperationResult.Success;
         }
 
         public async Task<TeacherLesson?> GetTeacherLessonAsync(int lessonId)
@@ -148,6 +150,29 @@ namespace backend.Repositories
             _identityDbContext.StudentLessons.Remove(lesson);
             await _identityDbContext.SaveChangesAsync();
             return OperationResult.Success;
+        }
+
+        public async Task<IList<SearchUserDTO>> GetTeacherStudentsAsync(int teacherId)
+        {
+            return await _identityDbContext.StudentLessons
+                .Where(l => l.TeacherLesson.TeacherId == teacherId)
+                .Select(l => new SearchUserDTO
+                {
+                    UserId = l.User.UserId,
+                    FullName = $"{l.User.FirstName} {l.User.LastName}"
+                })
+                .Distinct().ToListAsync();
+        }
+        public async Task<IList<SearchUserDTO>> GetStudentTeachersAsync(int studentId)
+        {
+            return await _identityDbContext.StudentLessons
+                .Where(l => l.StudentId == studentId)
+                .Select(l => new SearchUserDTO
+                {
+                    UserId = l.TeacherLesson.User.UserId,
+                    FullName = $"{l.TeacherLesson.User.FirstName} {l.TeacherLesson.User.LastName}"
+                })
+                .Distinct().ToListAsync();
         }
     }
 }

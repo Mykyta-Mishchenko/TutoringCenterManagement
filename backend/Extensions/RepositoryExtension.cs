@@ -11,10 +11,12 @@ namespace backend.Extensions
         {
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IReportsRepository, ReportsRepository>();
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<ILessonsRepository, LessonsRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
             services.AddScoped<ISubjectsRepository, SubjectsRepository>();
+            services.AddScoped<IMarkTypesRepository, MarkTypesRepository>();
             services.AddScoped<ILessonTypeRepository, LessonTypeRepository>();
         }
     }

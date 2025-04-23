@@ -1,5 +1,6 @@
 ﻿using backend.Data.DataModels;
 using backend.Interfaces.Repositories;
+using backend.Models;
 using JwtBackend.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,11 @@ namespace JwtBackend.Repositories
         {
             _identityDbContext = identityDbContext;
         }
-        public async Task AddSessionAsync(RefreshSession session)
+        public async Task<RefreshSession?> CreateSessionAsync(RefreshSession session)
         {
             await _identityDbContext.RefreshSessions.AddAsync(session);
             await _identityDbContext.SaveChangesAsync();
+            return session;
         }
 
         public async Task<IList<RefreshSession>> GetUserSessionsAsync(User user)
@@ -35,28 +37,34 @@ namespace JwtBackend.Repositories
             return await _identityDbContext.RefreshSessions.FirstOrDefaultAsync(s => s.RefreshToken == refreshToken);
         }
 
-        public void RemoveSession(string refreshToken)
+        public async Task<OperationResult> DeleteSessionAsync(string refreshToken)
         {
-            var session = _identityDbContext.RefreshSessions.FirstOrDefault(s => s.RefreshToken == refreshToken);
+            var session = await _identityDbContext.RefreshSessions.FirstOrDefaultAsync(s => s.RefreshToken == refreshToken);
             if(session != null)
             {
                 _identityDbContext.RefreshSessions.Remove(session);
-                _identityDbContext.SaveChanges();
+                await _identityDbContext.SaveChangesAsync();
+                return OperationResult.Success;
             }
+
+            return OperationResult.Failure;
         }
 
-        public void RemoveUserSessions(User user)
+        public async Task<OperationResult> DeleteUserSessionsAsync(User user)
         {
-            var dbUser = _identityDbContext.Users.FirstOrDefault(u => u.Email == user.Email);
+            var dbUser = await _identityDbContext.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
             if(dbUser != null)
             {
-                var sessions =  _identityDbContext.RefreshSessions.Where(s => s.UserId == dbUser.UserId).ToList();
+                var sessions =  await _identityDbContext.RefreshSessions.Where(s => s.UserId == dbUser.UserId).ToListAsync();
                 _identityDbContext.RefreshSessions.RemoveRange(sessions);
-                _identityDbContext.SaveChanges();
+                await _identityDbContext.SaveChangesAsync();
+                return OperationResult.Success;
             }
+
+            return OperationResult.Failure;
         }
 
-        public async Task UpdateSessionAsync(string oldRefreshToken, string newRefreshToken)
+        public async Task<RefreshSession?> UpdateSessionAsync(string oldRefreshToken, string newRefreshToken)
         {
             var session = await _identityDbContext.RefreshSessions.FirstOrDefaultAsync(s=>s.RefreshToken == oldRefreshToken);
             if(session != null)
@@ -64,7 +72,9 @@ namespace JwtBackend.Repositories
                 session.RefreshToken = newRefreshToken;
                 _identityDbContext.RefreshSessions.Update(session);
                 await _identityDbContext.SaveChangesAsync();
+                return session;
             }
+            return null;
         }
     }
 }

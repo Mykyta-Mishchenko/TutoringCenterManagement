@@ -14,15 +14,18 @@ namespace backend.Configurations
 
             builder.HasOne(l => l.User)
                 .WithMany(u => u.TeacherLessons)
-                .HasForeignKey(l => l.TeacherId);
+                .HasForeignKey(l => l.TeacherId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(l => l.LessonType)
                 .WithMany(u => u.Lessons)
-                .HasForeignKey(l => l.TypeId);
+                .HasForeignKey(l => l.TypeId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.HasOne(l => l.Schedule)
                 .WithMany(u => u.Lessons)
-                .HasForeignKey(l => l.ScheduleId);
+                .HasForeignKey(l => l.ScheduleId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.ToTable("TeacherLessons");
         }

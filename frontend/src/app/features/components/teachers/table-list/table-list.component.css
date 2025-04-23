@@ -39,7 +39,7 @@
 
 .table-container{
     overflow-y: scroll;
-    max-height: 78vh;
+    height: 78vh;
 }
 
 table thead {
