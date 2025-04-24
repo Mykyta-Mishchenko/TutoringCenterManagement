@@ -13,9 +13,10 @@ namespace backend.Interfaces.Repositories
 
         public Task<IList<Subject>> GetAllSubjectsAsync();
         public Task<TeacherLesson?> GetTeacherLessonAsync(int lessonId);
-        public Task<StudentLesson?> GetStudentLessonAsync(int studentId, int lessonId);
+        public Task<StudentLesson?> GetStudentLessonAsync(int studentId, int teacherLessonId);
         public Task<IList<TeacherLesson>> GetTeacherLessonsAsync(int userId);
         public Task<IList<StudentLesson>> GetStudentLessonsAsync(int userId);
+        public Task<IList<TeacherLesson>> GetTeacherLessonsByStudentAsync(int teacherId, int studentId);
         public Task<TeacherLesson?> GetCrossingTeacherLessonAsync(TeacherLesson lesson);
         public Task<StudentLesson?> GetCrossingStudentLessonAsync(StudentLesson lesson);
         public Task<IList<SearchUserDTO>> GetTeacherStudentsAsync(int teacherId);

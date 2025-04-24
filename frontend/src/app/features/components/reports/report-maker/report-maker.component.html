@@ -14,26 +14,11 @@
       <form class="boxed-form" [formGroup]="form" (ngSubmit)="onSubmit()">
 
         <div class="form-group">
-          <label for="date">Date:</label>
-          <input type="date"
-                 class="form-control"
-                 [class.is-valid]="dateControl?.valid && dateControl?.touched"
-                 [class.is-invalid]="dateControl?.invalid && dateControl?.touched"
-                 formControlName="date"
-                 [attr.min]="minDateStr()"
-                 [attr.max]="maxDateStr()">
-          <div class="invalid-feedback" *ngIf="dateControl?.invalid && dateControl?.touched">
-            Date is required and must be between {{ minDateStr() }} and {{ maxDateStr() }}.
-          </div>
-        </div>
-      
-        <div class="form-group">
           <label for="studentId">Student:</label>
           <select formControlName="studentId"
                   class="form-control"
                   [class.is-valid]="studentIdControl?.valid && studentIdControl?.touched"
-                  [class.is-invalid]="studentIdControl?.invalid && studentIdControl?.touched"
-                  [disabled]="!isAdding()">
+                  [class.is-invalid]="studentIdControl?.invalid && studentIdControl?.touched">
             @for(student of students(); track student.userId){
               <option [value]="student.userId">{{ student.fullName }}</option>
             }
@@ -42,7 +27,20 @@
             Please select a student.
           </div>
         </div>
-      
+          <div class="form-group">
+            <label for="lesson">Lesson:</label>
+            <select formControlName="lessonDate"
+                    class="form-control"
+                    [class.is-valid]="lessonDateControl?.valid && lessonDateControl?.touched"
+                    [class.is-invalid]="lessonDateControl?.invalid && lessonDateControl?.touched">
+              @for(lesson of studentSchedule(); track lesson.date){
+                <option [value]="lesson.date">{{ lesson.date | date: "dd-MM-YYYY HH:mm" }}</option>
+              }
+            </select>
+            <div class="invalid-feedback" *ngIf="lessonDateControl?.invalid && lessonDateControl?.touched">
+              Please select date.
+            </div>
+          </div>
         <div formArrayName="marks" class="row">
           @for(markGroup of marksArray.controls; track $index){
             <div [formGroupName]="$index" class="form-group mb-2 col">
@@ -50,8 +48,7 @@
               <select formControlName="markValue"
                       class="form-control"
                       [class.is-valid]="markGroup.get('markValue')?.valid && markGroup.get('markValue')?.touched"
-                      [class.is-invalid]="markGroup.get('markValue')?.invalid && markGroup.get('markValue')?.touched"
-                      [disabled]="!isAdding()">
+                      [class.is-invalid]="markGroup.get('markValue')?.invalid && markGroup.get('markValue')?.touched">
                 @for(num of getRange(0,10); track num){
                   <option [value]="num">{{ num }}</option>
                 }
@@ -77,7 +74,7 @@
         </div>
       
         <div class="d-flex justify-content-end">
-          <button type="submit" class="btn btn-outline-success btn-long" [disabled]="form.invalid">
+          <button type="submit" class="btn btn-outline-success btn-long" [disabled]="form.invalid || !isAnyLessons()">
             @if(isAdding()){Create}
             @else{Edit}
           </button>

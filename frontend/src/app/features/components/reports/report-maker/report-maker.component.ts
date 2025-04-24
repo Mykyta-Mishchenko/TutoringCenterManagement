@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, computed, inject, input, OnChanges, OnInit, output, signal } from '@angular/core';
 import { ReportDTO } from '../../../../shared/models/dto/reports-dto/report.dto';
 import { ReportsService } from '../../../services/reports.service';
@@ -6,14 +6,15 @@ import { MarkType } from '../../../../shared/models/mark-type.model';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { SearchUserDTO } from '../../../../shared/models/dto/reports-dto/search-user.dto';
-import { dateRangeValidator } from './form.validators';
 import { ReportCreatingDTO } from '../../../../shared/models/dto/reports-dto/report-creating.dto';
 import { ReportEditingDTO } from '../../../../shared/models/dto/reports-dto/report-editing.dto';
+import { ReportScheduleDTO } from '../../../../shared/models/dto/reports-dto/lesson-schedule.dto';
+import { startWith } from 'rxjs';
 
 @Component({
   selector: 'app-report-maker',
   standalone: true,
-  imports: [NgIf, ReactiveFormsModule],
+  imports: [NgIf, ReactiveFormsModule, DatePipe],
   templateUrl: './report-maker.component.html',
   styleUrl: './report-maker.component.css'
 })
@@ -31,6 +32,12 @@ export class ReportMakerComponent implements OnChanges, OnInit{
   report = signal<ReportDTO | null>(null);
   markTypes = signal<MarkType[]>([]);
   students = signal<SearchUserDTO[]>([]);
+
+  studentSchedule = signal<ReportScheduleDTO[]>([]);
+  isAnyLessons = signal<boolean>(false);
+  selectedStudentId = signal<number | null>(null);
+
+  previousSelectedStudentId = -1;
 
   minDateStr = signal<string>('')
   maxDateStr = signal<string>('')
@@ -55,13 +62,22 @@ export class ReportMakerComponent implements OnChanges, OnInit{
 
   ngOnChanges(): void {
     if (!this.isAdding()) {
-      this.report.set(this.reportsService.getReport(this.reportId()!));
-      this.setForm();
-      this.setFormFieldsDisabled();
+      this.reportsService.getReport(this.reportId()!).subscribe({
+        next: (report) => {
+          this.report.set(report);
+          this.setForm();
+          this.studentSchedule().push({ lessonId: report.reportId, date: report.date });
+          this.setEditingFormFieldsDisabled();
+        },
+        error: () => {
+          this.close.emit();
+        }
+      })
     }
     else if(this.form){
       this.report.set(null);
       this.setForm();
+      this.updateStudentSchedule();
     }
   }
 
@@ -69,29 +85,68 @@ export class ReportMakerComponent implements OnChanges, OnInit{
     this.close.emit();
   }
 
+  onStudentChange(studentId: number) {
+    if (studentId && studentId != this.previousSelectedStudentId) {
+      this.selectedStudentId.set(studentId);
+      this.updateStudentSchedule();
+
+      this.previousSelectedStudentId = studentId;
+    }
+  }
+
+  updateStudentSchedule() {
+    if (this.selectedStudentId()) {
+      this.reportsService.getStudentSchedule(this.teacherId, this.selectedStudentId()!).subscribe({
+        next: (schedule) => {
+          this.studentSchedule.set(schedule);
+          if (this.studentSchedule().length > 0) {
+            this.setCreatingFormFieldsEnabled();
+            this.isAnyLessons.set(true);
+          }
+          else {
+            this.setCreatingFormFieldsDisabled();
+            this.isAnyLessons.set(false);
+          }
+        }
+      });
+    }
+  }
+
   onSubmit() {
     if (this.form.valid) {
       if (this.isAdding()) {
+        const lessonDate = this.form.get('lessonDate')!.value;
+        const lessonId = this.studentSchedule().find(l => l.date == lessonDate)!.lessonId;
+
         const report: ReportCreatingDTO = {
           teacherId: this.authService.User()!.userId,
           studentId: this.form.get('studentId')!.value,
-          date: new Date(this.form.get('date')!.value),
+          teacherLessonId: lessonId,
+          date: lessonDate,
           description: this.form.get('description')!.value,
           marks: this.form.get('marks')!.value.map((m: any) => ({
             markTypeId: m.markType,
             markValue: m.markValue
           }))
         };
-        this.reportsService.addUserReport(report);
+
+        this.reportsService.addReport(report).subscribe({
+          next: () => {
+            this.closeModal();     
+          }
+        });
       }
       else {
         const report: ReportEditingDTO = {
           reportId: this.reportId()!,
           description: this.form.get('description')!.value,
         };
-        this.reportsService.editReport(report);
+        this.reportsService.editReport(report).subscribe({
+          next: () => {
+            this.closeModal(); 
+          }
+        });
       }
-      this.closeModal();
     }
   }
 
@@ -124,38 +179,54 @@ export class ReportMakerComponent implements OnChanges, OnInit{
 
     const reportDate = this.report()?.date ? new Date(this.report()!.date) : today;
 
-    const formattedDate = reportDate.toISOString().substring(0, 10);
-
     this.form = new FormGroup({
-      date: new FormControl<string>(formattedDate,
-        { validators: [Validators.required, dateRangeValidator(minDate, maxDate)] }),
-      studentId: new FormControl<number | null>(this.report()?.studentId ?? this.students()[0]?.userId,
+      studentId: new FormControl<number | null>({ value: this.report()?.studentId ?? this.students()[0]?.userId , disabled: !this.isAdding()},
         { validators: [Validators.required] }),
+      lessonDate: new FormControl<Date | null>({ value: this.report()?.date ?? null, disabled: !this.isAdding() },
+        { validators: [Validators.required]}),
       marks: new FormArray(this.markTypes().map((mark) =>
         new FormGroup({
           markType: new FormControl<number>(mark.typeId,
             { validators: [Validators.required] }),
           markValue: new FormControl<number>(
-            this.report()?.marks.find(m => m.markTypeId == mark.typeId)?.markValue ?? 0,
+            { value: this.report()?.marks.find(m => m.markTypeId == mark.typeId)?.markValue ?? 0, disabled: !this.isAdding() },
             { validators: [Validators.required, Validators.min(0), Validators.max(10)] })
         })
       )),
       description: new FormControl<string>(this.report()?.description ?? '', { validators: [Validators.required, Validators.maxLength(500)] })
     });
+
+    this.form.get('studentId')?.valueChanges
+    .pipe(startWith(this.form.get('studentId')?.value))
+    .subscribe((studentId: number) => {
+      this.onStudentChange(studentId);
+    });
   }
 
-  setFormFieldsDisabled(){
+  setEditingFormFieldsDisabled(){
     this.form.get('date')?.disable();
     this.form.get('studentId')?.disable();
     this.form.get('marks')?.disable();
   }
 
-  get dateControl() {
-    return this.form.get('date');
+  setCreatingFormFieldsDisabled() {
+    this.form.get('lessonDate')?.disable();
+    this.form.get('marks')?.disable();
+    this.form.get('description')?.disable();
+  }
+
+  setCreatingFormFieldsEnabled() {
+    this.form.get('lessonDate')?.enable();
+    this.form.get('marks')?.enable();
+    this.form.get('description')?.enable();
   }
   
   get studentIdControl() {
     return this.form.get('studentId');
+  }
+
+  get lessonDateControl() {
+    return this.form.get('lessonDate');
   }
   
   get descriptionControl() {
@@ -165,6 +236,4 @@ export class ReportMakerComponent implements OnChanges, OnInit{
   get marksArray(): FormArray {
     return this.form.get('marks') as FormArray;
   }
-
-
 }

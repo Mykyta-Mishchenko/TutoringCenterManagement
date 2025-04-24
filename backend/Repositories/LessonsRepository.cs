@@ -29,10 +29,10 @@ namespace backend.Repositories
             return await _identityDbContext.TeacherLessons.FirstOrDefaultAsync(l => l.LessonId == lessonId);
         }
 
-        public async Task<StudentLesson?> GetStudentLessonAsync(int studentId, int lessonId)
+        public async Task<StudentLesson?> GetStudentLessonAsync(int studentId, int teacherLessonId)
         {
             return await _identityDbContext.StudentLessons
-                .FirstOrDefaultAsync(l => l.LessonId == lessonId && l.StudentId == studentId);
+                .FirstOrDefaultAsync(l => l.LessonId == teacherLessonId && l.StudentId == studentId);
         }
 
         public async Task<IList<Subject>> GetAllSubjectsAsync()
@@ -173,6 +173,14 @@ namespace backend.Repositories
                     FullName = $"{l.TeacherLesson.User.FirstName} {l.TeacherLesson.User.LastName}"
                 })
                 .Distinct().ToListAsync();
+        }
+
+        public async Task<IList<TeacherLesson>> GetTeacherLessonsByStudentAsync(int teacherId, int studentId)
+        {
+            return await _identityDbContext.TeacherLessons
+                .Where(l => l.TeacherId == teacherId && l.StudentLessons.Any(l => l.StudentId == studentId))
+                .Include(l => l.Schedule)
+                .ToListAsync();
         }
     }
 }

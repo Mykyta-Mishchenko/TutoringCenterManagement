@@ -91,5 +91,80 @@ namespace backend.Controllers
 
             return Ok(teachers);
         }
+
+        [HttpGet("teacher/students/reports/empty")]
+        [Authorize(Roles = "teacher")]
+        public async Task<IActionResult> GetEmptyReportsSchedule([FromQuery] int teacherId, [FromQuery] int studentId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+            
+            if (userId == null || int.Parse(userId.Value) != teacherId)
+            {
+                return Unauthorized();
+            }
+
+            var schedule = await _reportsService.GetUnassignedReportsAsync(teacherId, studentId);
+
+            return Ok(schedule);
+        }
+
+        [HttpPost("reports/add")]
+        [Authorize(Roles = "teacher")]
+        public async Task<IActionResult> AddNewReport(ReportCreatingDTO report)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userId == null || int.Parse(userId.Value) != report.TeacherId)
+            {
+                return Unauthorized();
+            }
+
+            var result = await _reportsService.CreateReport(report);
+
+            if(result == OperationResult.Failure)
+            {
+                return BadRequest("Something went wrong");
+            }
+
+            return Ok();
+        }
+
+        [HttpPut("reports/edit")]
+        [Authorize(Roles = "teacher")]
+        public async Task<IActionResult> EditReport(ReportEditingDTO report)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _reportsService.UpdateReportAsync(report);
+
+            if(result == OperationResult.Failure)
+            {
+                return BadRequest("Can't update report.");
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("reports")]
+        [Authorize(Roles = "teacher")]
+        public async Task<IActionResult> GetReportById([FromQuery] int reportId)
+        {
+            var report = await _reportsService.GetReportByIdAsync(reportId);
+
+            if(report == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(report);
+        }
     }
 }

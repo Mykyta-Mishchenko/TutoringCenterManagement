@@ -18,7 +18,7 @@
                     <td>
                         {{ report.date | date : "YY/MM/dd hh:mm"}}
                     </td>
-                    <td class="align-middle">
+                    <td>
                         <span *hasRole="'teacher'"> {{report.studentFullName}} </span>
                         <span *hasRole="'student'"> {{report.teacherFullName}} </span>
                     </td>

@@ -68,7 +68,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpPost("update")]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateLesson(LessonEditDTO lesson)
         {
             if (!ModelState.IsValid)

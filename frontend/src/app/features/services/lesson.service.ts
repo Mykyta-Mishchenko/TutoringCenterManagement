@@ -33,7 +33,7 @@ export class LessonService{
     }
 
     updateLesson(lesson: LessonEditDTO): Observable<any> {
-        return this.httpClient.post(`${this.apiUrl}/lessons/update`, lesson, { withCredentials: true });
+        return this.httpClient.put(`${this.apiUrl}/lessons/update`, lesson, { withCredentials: true });
     }
 
     addLesson(lesson: LessonCreateDTO): Observable<any> {

@@ -9,6 +9,7 @@ import { ReportCreatingDTO } from '../../shared/models/dto/reports-dto/report-cr
 import { ReportEditingDTO } from '../../shared/models/dto/reports-dto/report-editing.dto';
 import { ReportsInfoList } from '../../shared/models/dto/reports-dto/reports-info-list.dto';
 import { Observable } from 'rxjs';
+import { ReportScheduleDTO } from '../../shared/models/dto/reports-dto/lesson-schedule.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -40,28 +41,22 @@ export class ReportsService {
     return this.httpClient.get<MarkType[]>(`${this.apiUrl}/marks/types`, { withCredentials: true });
   }
 
-  addUserReport(report: ReportCreatingDTO) {
-    
+  addReport(report: ReportCreatingDTO) : Observable<any> {
+    return this.httpClient.post(`${this.apiUrl}/reports/add`, report, { withCredentials: true });
   }
 
-  editReport(report : ReportEditingDTO) {
-    
+  editReport(report : ReportEditingDTO) : Observable<any>{
+    return this.httpClient.put(`${this.apiUrl}/reports/edit`, report, { withCredentials: true });
   }
 
-  getReport(reportId: number): ReportDTO{
-    return {
-      reportId: 1,
-      studentId: 1,
-      teacherFullName: "Anna Kovalenko",
-      studentFullName: "Ivan Petrov",
-      description: "Ivan shows consistent improvement in algebra and geometry.",
-      date: new Date("2025-04-01"),
-      marks: [
-        { markTypeId: 1, markValue: 8 },
-        { markTypeId: 2, markValue: 9 },
-        { markTypeId: 3, markValue: 7 }
-      ]
-    };
+  getStudentSchedule(teacherId: number, studentId: number): Observable<ReportScheduleDTO[]> {
+    return this.httpClient.get<ReportScheduleDTO[]>(
+      `${this.apiUrl}/teacher/students/reports/empty?teacherId=${teacherId}&studentId=${studentId}`,
+      { withCredentials: true });
+  }
+
+  getReport(reportId: number): Observable<ReportDTO>{
+    return this.httpClient.get<ReportDTO>(`${this.apiUrl}/reports?reportId=${reportId}`, { withCredentials: true });
   }
 
   getTeacherStudents(teacherId: number): Observable<SearchUserDTO[]> {

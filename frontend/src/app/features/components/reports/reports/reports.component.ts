@@ -37,10 +37,7 @@ export class ReportsComponent implements OnInit{
   viewName = computed(() => this.isStandartView() ? "analytics" : "table");
   searchUsers = signal<SearchUserDTO[]>([]);
   reports = signal<ReportDTO[]>([]);
-  filter = signal<ReportsFilter>({
-    ...this.reportsService.BasicStudentsFilter,
-    teacherId: this.currentUserId()
-  });
+  filter = signal<ReportsFilter>(this.reportsService.BasicStudentsFilter);
 
   total = signal<number>(1);
   page = signal<number>(this.filter().page);
@@ -72,6 +69,7 @@ export class ReportsComponent implements OnInit{
   getReports() {
     let reportsInfo: ReportsInfoList = { reportsList: [], totalPageNumber: 0 };
     if (this.currentUserRole() == Roles.Student) {
+      this.filter.set({ ...this.filter(), studentId: this.currentUserId() });
       this.reportsService.getStudentReports(this.filter()).subscribe({
         next: (reports) => {
           reportsInfo = reports;
@@ -81,6 +79,7 @@ export class ReportsComponent implements OnInit{
       })
     }
     else if (this.currentUserRole() == Roles.Teacher) {
+      this.filter.set({ ...this.filter(), teacherId: this.currentUserId() });
       this.reportsService.getTeacherReports(this.filter()).subscribe({
         next: (reports) => {
           reportsInfo = reports;
@@ -101,25 +100,23 @@ export class ReportsComponent implements OnInit{
       const role = this.currentUserRole();
       if (role == Roles.Student) {
         this.filter.set({
-          ...this.reportsService.BasicStudentsFilter,
+          ...this.filter(),
           isSearching: true,
           teacherId: Number(selectedUserId)
         });
       }
       else{
         this.filter.set({
-          ...this.reportsService.BasicStudentsFilter,
+          ...this.filter(),
           isSearching: true,
-          teacherId: Number(selectedUserId)
+          studentId: Number(selectedUserId)
         });
       }
       this.getReports();
     }
     else {
-      this.filter.set({
-        ...this.filter(),
-        isSearching: false
-      })
+      this.filter.set(this.reportsService.BasicStudentsFilter);
+      this.getReports();
     }
   }
 

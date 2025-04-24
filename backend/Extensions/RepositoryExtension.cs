@@ -9,6 +9,7 @@ namespace backend.Extensions
     {
         public static void AddApplicationRepositories(this IServiceCollection services)
         {
+            services.AddScoped<IMarkRepository, MarkRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IReportsRepository, ReportsRepository>();
