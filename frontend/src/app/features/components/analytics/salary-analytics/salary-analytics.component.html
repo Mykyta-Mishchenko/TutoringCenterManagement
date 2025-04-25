@@ -1,0 +1,26 @@
+<div class="salary-box">
+    <div class="salary-dashboard">
+        <div class="col-9">
+            <canvas baseChart class="col-12" style="width:100%;"
+                [data]="lineChartData()"
+                [options]="lineChartOptions"
+                [type]="lineChartType">
+            </canvas>
+        </div>
+        <div class="col-3">
+            <h5>Date range:</h5>
+            <div class="input-group mb-auto">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white">
+                        <i class="bi bi-calendar2-week"></i>
+                    </span>
+                </div>
+                <select class="form-control" #dateSelect (change)="onSearch(dateSelect.value)">
+                    <option [value]="1" >Last month</option>
+                    <option [value]="6" >Last 6 months</option>
+                    <option [value]="12" >Last year</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

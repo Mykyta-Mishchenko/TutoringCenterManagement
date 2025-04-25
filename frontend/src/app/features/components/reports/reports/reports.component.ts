@@ -33,7 +33,7 @@ export class ReportsComponent implements OnInit{
   currentUserRole = computed<Roles>(() => this.authService.User()!.role);
   currentUserId = computed<number>(() => this.authService.User()!.userId);
 
-  isStandartView = signal<boolean>(true);
+  isStandartView = signal<boolean>(false);
   viewName = computed(() => this.isStandartView() ? "analytics" : "table");
   searchUsers = signal<SearchUserDTO[]>([]);
   reports = signal<ReportDTO[]>([]);

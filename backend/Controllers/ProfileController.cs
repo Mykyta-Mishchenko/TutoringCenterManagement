@@ -8,7 +8,7 @@ namespace backend.Controllers
     [Route("api/profile")]
     [ApiController]
     [Authorize]
-    public class ProfileController : Controller
+    public class ProfileController : ControllerBase
     {
         private readonly IProfileService _profileService;
 

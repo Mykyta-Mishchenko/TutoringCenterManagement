@@ -11,7 +11,7 @@ namespace backend.Controllers
     [ApiController]
     [Route("api")]
     [Authorize]
-    public class ReportsController : Controller
+    public class ReportsController : ControllerBase
     {
         private readonly IReportsService _reportsService;
         private readonly ILessonsService _lessonsService;

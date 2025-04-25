@@ -1,0 +1,54 @@
+<div class="salary-box">
+    <div class="salary-card">
+        <div class="salary-header">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white">
+                      <i class="bi bi-search"></i>
+                    </span>
+                </div>
+                <select class="form-control" #userSelect>
+                    <option value="">Select</option>
+                      @for(user of searchUsers(); track user.userId){
+                        <option [value]="user.userId">{{user.fullName}}</option>
+                      }
+                  </select>
+                <button class="btn btn-outline-success my-2 my-sm-0" (click)="onSearch(userSelect.value)">Search</button>    
+            </div>
+        </div>
+        <div class="salary-table">
+            <table class="table table-hover table-light table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col" *hasRole="'student'">Teacher name</th>
+                        <th scope="col" *hasRole="'teacher'">Student name</th>
+                        <th scope="col">Lessons count</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for(report of salaryReports(); track report.id){
+                        <tr>
+                            <td>{{salaryReports().indexOf(report)+1}}</td>
+                            <td *hasRole="'teacher'">{{report.studentFullName}}</td>
+                            <td *hasRole="'student'">{{report.teacherFullName}}</td>
+                            <td>{{report.lessonsCount}}</td>
+                            <td>{{report.price}}</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="salary-total">
+        <div class="d-flex justify-content-between">
+            <h4>Total <span *hasRole="'teacher'">Salary</span><span *hasRole="'student'">Price</span>:</h4>
+            <h4>{{totalPrice()}} ₴</h4>
+        </div>
+        <div class="d-flex justify-content-between">
+            <span>Total lessons count:</span>
+            <span>{{totalLessonsCount()}}</span>
+        </div>
+    </div>
+</div>

@@ -1,1 +1,11 @@
-<p>reports-analytics works!</p>
+<div class="analytics-grid">
+    <div class="salary-box">
+        <app-salary-review (selectedStudent)="onStudentSelect($event)" ></app-salary-review>
+    </div>
+    <div class="analytics-salary-box">
+        <app-salary-analytics ></app-salary-analytics>
+    </div>
+    <div class="student-marks-box">
+        <app-marks-analytics [selectedStudent]="selectedStudentId()"></app-marks-analytics>
+    </div>
+</div>

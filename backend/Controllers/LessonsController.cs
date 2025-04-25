@@ -12,7 +12,7 @@ namespace backend.Controllers
     [Route("api/lessons")]
     [ApiController]
     [Authorize]
-    public class LessonsController : Controller
+    public class LessonsController : ControllerBase
     {
         private readonly ILessonsService _lessonsService;
         public LessonsController(

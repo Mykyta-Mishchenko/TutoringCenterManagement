@@ -17,6 +17,7 @@ namespace backend.Extensions
             services.AddScoped<ILessonsRepository, LessonsRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
             services.AddScoped<ISubjectsRepository, SubjectsRepository>();
+            services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
             services.AddScoped<IMarkTypesRepository, MarkTypesRepository>();
             services.AddScoped<ILessonTypeRepository, LessonTypeRepository>();
         }
