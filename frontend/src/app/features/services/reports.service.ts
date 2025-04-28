@@ -26,7 +26,7 @@ export class ReportsService {
       page: 1,
       perPage: 20
     };
-
+  
   getTeacherReports(filter: ReportsFilter): Observable<ReportsInfoList> {
     const queryString = this.buildQueryString(filter);
     return this.httpClient.get<ReportsInfoList>(`${this.apiUrl}/teacher/reports?${queryString}`, { withCredentials: true });

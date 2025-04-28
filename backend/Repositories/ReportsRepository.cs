@@ -15,6 +15,27 @@ namespace backend.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public async Task<ICollection<ReportDTO>> GetTeacherReportsAsync(int teacherId)
+        {
+            return await _dbContext.Reports
+                .Where(r => r.StudentLesson.TeacherLesson.TeacherId == teacherId)
+                .OrderBy(r => r.DateTime)
+                .Select(r => new ReportDTO
+                {
+                    ReportId = r.ReportId,
+                    StudentId = r.StudentLesson.StudentId,
+                    StudentFullName = $"{r.StudentLesson.User.FirstName} {r.StudentLesson.User.LastName}",
+                    TeacherFullName = $"{r.StudentLesson.TeacherLesson.User.FirstName} {r.StudentLesson.TeacherLesson.User.LastName}",
+                    Description = r.Description,
+                    Date = r.DateTime,
+                    Marks = r.Marks.Select(m => new MarkDTO
+                    {
+                        MarkTypeId = m.MarkTypeId,
+                        MarkValue = m.Score
+                    }).ToList()
+                }).ToListAsync();
+        }
         public async Task<ReportsListDTO> GetStudentReportsByFilterAsync(ReportsFilterDTO filter)
         {
             var baseQuery = _dbContext.Reports

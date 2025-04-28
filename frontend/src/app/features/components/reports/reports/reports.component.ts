@@ -11,6 +11,7 @@ import { HasRoleDirective } from '../../../../core/directives/role.directive';
 import { Roles } from '../../../../shared/models/roles.enum';
 import { PaginationComponent } from "../../../../shared/components/pagination/pagination.component";
 import { ReportsInfoList } from '../../../../shared/models/dto/reports-dto/reports-info-list.dto';
+import { ExternalApiService } from '../../../services/external-api.service';
 
 @Component({
   selector: 'app-reports',
@@ -29,11 +30,12 @@ export class ReportsComponent implements OnInit{
 
   private authService = inject(AuthService);
   private reportsService = inject(ReportsService);
+  private externalApiService = inject(ExternalApiService);
 
   currentUserRole = computed<Roles>(() => this.authService.User()!.role);
   currentUserId = computed<number>(() => this.authService.User()!.userId);
 
-  isStandartView = signal<boolean>(false);
+  isStandartView = signal<boolean>(true);
   viewName = computed(() => this.isStandartView() ? "analytics" : "table");
   searchUsers = signal<SearchUserDTO[]>([]);
   reports = signal<ReportDTO[]>([]);
@@ -132,6 +134,20 @@ export class ReportsComponent implements OnInit{
   }
 
   onReportsDownload() {
+    this.externalApiService.getTeacherReports(this.currentUserId()).subscribe({
+      next: (reports) => {
+
+        const blob = new Blob([JSON.stringify(reports,null,2)], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'reports.json';
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+      }
+    })
   }
 
   onReportEdit(reportId: number) {

@@ -7,6 +7,7 @@ import { UsersService } from '../../../../services/users.service';
 import { ProfileImgComponent } from "../profile-img/profile-img.component";
 import { UserInfo } from '../../../../../shared/models/dto/user-info.dto';
 import { BoardService } from '../../../../services/board.service';
+import { ExternalApiService } from '../../../../services/external-api.service';
 
 @Component({
   selector: 'app-profile',
@@ -18,6 +19,7 @@ import { BoardService } from '../../../../services/board.service';
 export class ProfileComponent implements OnChanges {
   private usersService = inject(UsersService);
   private boardService = inject(BoardService);
+  private externalApiService = inject(ExternalApiService);
 
   selectedUserId = input.required<number>()
   selectedUser = signal<UserInfo | null>(null);
@@ -51,7 +53,20 @@ export class ProfileComponent implements OnChanges {
   }
 
   onDownloadSchedule() {
-    
+    this.externalApiService.getTeacherSchedule(this.selectedUserId()).subscribe({
+      next: (schedule) => {
+
+        const blob = new Blob([JSON.stringify(schedule, null, 2)], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'schedule.json';
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+      }
+    })
   }
 
   onUpdate() {

@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LessonCreateDTO",
+  "description": "Schema for creating a teacher lesson",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "integer",
+      "description": "User identifier"
+    },
+    "subjectId": {
+      "type": "integer",
+      "description": "Subject identifier"
+    },
+    "schoolYear": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 12,
+      "description": "School year (0-12)"
+    },
+    "maxStudentsCount": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Maximum number of students (1-5)"
+    },
+    "day": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7,
+      "description": "Day of the week (1-7)"
+    },
+    "hour": {
+      "type": "integer",
+      "minimum": 8,
+      "maximum": 20,
+      "description": "Hour of the lesson (8-20)"
+    },
+    "minutes": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 60,
+      "description": "Minutes (0-60)"
+    },
+    "price": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5000,
+      "description": "Lesson price (0-5000)"
+    }
+  },
+  "required": [
+    "subjectId",
+    "schoolYear",
+    "maxStudentsCount",
+    "day",
+    "hour",
+    "minutes",
+    "price"
+  ]
+}

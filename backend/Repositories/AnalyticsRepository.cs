@@ -43,7 +43,7 @@ namespace backend.Repositories
             return await GetPriceFromQuery(query, filter);
         }
 
-        public async Task<ICollection<SalaryReportDTO>> GetStudentPriceReports(SalaryFilterDTO filter)
+        public async Task<ICollection<SalaryReportDTO>> GetStudentPriceReportsAsync(SalaryFilterDTO filter)
         {
             var query = _dbContext.Reports
                 .Where(r => r.StudentLesson.StudentId == filter.StudentId)
@@ -98,7 +98,27 @@ namespace backend.Repositories
             return await GetPriceFromQuery(query, filter);
         }
 
-        public async Task<ICollection<SalaryReportDTO>> GetTeacherSalaryReports(SalaryFilterDTO filter)
+        public async Task<ICollection<SalaryReportDTO>> GetTeacherSalaryReportsAsync(int teacherId)
+        {
+            return await _dbContext.Reports
+                .Where(r => r.StudentLesson.TeacherLesson.TeacherId == teacherId)
+                .GroupBy(r => new
+                {
+                    r.StudentLesson.StudentId,
+                    r.StudentLesson.User.FirstName,
+                    r.StudentLesson.User.LastName
+                })
+                .Select(g => new SalaryReportDTO
+                {
+                    Id = g.Key.StudentId,
+                    StudentFullName = $"{g.Key.FirstName} {g.Key.LastName}",
+                    TeacherFullName = "",
+                    LessonsCount = g.Count(),
+                    Price = g.Sum(r => r.StudentLesson.TeacherLesson.LessonType.Price)
+                }).ToListAsync();
+        }
+
+        public async Task<ICollection<SalaryReportDTO>> GetTeacherSalaryReportsAsync(SalaryFilterDTO filter)
         {
             var query = _dbContext.Reports
                 .Where(r => r.StudentLesson.TeacherLesson.TeacherId == filter.TeacherId)

@@ -67,6 +67,10 @@ namespace backend.Services
 
             return OperationResult.Success;
         }
+        public async Task<ICollection<ReportDTO>> GetTeacherReportsAsync(int teacherId)
+        {
+            return await _reportsRepository.GetTeacherReportsAsync(teacherId);
+        }
         public async Task<ReportsListDTO> GetReportsByFilterAsync(ReportsFilterDTO filter, UserRole role)
         {
             if (role == UserRole.student)

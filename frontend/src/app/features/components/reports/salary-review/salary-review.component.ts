@@ -7,6 +7,7 @@ import { HasRoleDirective } from '../../../../core/directives/role.directive';
 import { AnalyticsService } from '../../../services/analytics.service';
 import { SalaryFilter } from '../../../../shared/models/dto/analytics-dto/salary-filter.dto';
 import { SalaryReportDTO } from '../../../../shared/models/dto/analytics-dto/salary-report.dto';
+import { ExternalApiService } from '../../../services/external-api.service';
 
 @Component({
   selector: 'app-salary-review',
@@ -20,6 +21,7 @@ export class SalaryReviewComponent implements OnInit{
   private analyticsService = inject(AnalyticsService);
   private reportsService = inject(ReportsService);
   private authService = inject(AuthService);
+  private externalApiService = inject(ExternalApiService);
 
   selectedStudent = output<SearchUserDTO | null>();
 
@@ -101,6 +103,19 @@ export class SalaryReviewComponent implements OnInit{
     }
   }
   onSalaryDownload() {
-    
+    this.externalApiService.getTeacherSalaryReports(this.currentUserId()).subscribe({
+      next: (reports) => {
+
+        const blob = new Blob([JSON.stringify(reports,null,2)], { type: 'text/plain;charset=utf-8' });
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'reports.json';
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+      }
+    })
   }
 }

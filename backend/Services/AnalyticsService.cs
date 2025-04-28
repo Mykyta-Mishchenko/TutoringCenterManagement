@@ -12,7 +12,10 @@ namespace backend.Services
         {
             _analyticsRepository = analyticsRepository;
         }
-
+        public async Task<ICollection<SalaryReportDTO>> GetTeacherSalaryReportsAsync(int teacherId)
+        {
+            return await _analyticsRepository.GetTeacherSalaryReportsAsync(teacherId);
+        }
         public async Task<StudentAnalyticsDTO?> GetMarksAnalyticsAsync(AnalyticsFilterDTO filter, UserRole role)
         {
             if (role == UserRole.teacher)
@@ -45,11 +48,11 @@ namespace backend.Services
         {
             if(role == UserRole.teacher)
             {
-                return await _analyticsRepository.GetTeacherSalaryReports(filter);
+                return await _analyticsRepository.GetTeacherSalaryReportsAsync(filter);
             }
             else if(role == UserRole.student)
             {
-                return await _analyticsRepository.GetStudentPriceReports(filter);
+                return await _analyticsRepository.GetStudentPriceReportsAsync(filter);
             }
 
             return new List<SalaryReportDTO>();
