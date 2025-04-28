@@ -5,6 +5,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.EventSource;
+using SixLabors.ImageSharp.Formats.Bmp;
 using System.Security.Claims;
 
 namespace backend.Controllers
@@ -69,6 +70,7 @@ namespace backend.Controllers
         }
 
         [HttpPut("update")]
+        [Authorize(Roles = "teacher")]
         public async Task<IActionResult> UpdateLesson(LessonEditDTO lesson)
         {
             if (!ModelState.IsValid)
@@ -95,8 +97,9 @@ namespace backend.Controllers
             }
         }
 
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteTeacherLesson([FromQuery] int lessonId)
+        [HttpDelete("delete/{lessonId:int}")]
+        [Authorize(Roles = "teacher")]
+        public async Task<IActionResult> DeleteTeacherLesson(int lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
@@ -115,8 +118,9 @@ namespace backend.Controllers
             return NotFound("No such lesson.");
         }
 
-        [HttpPost("subscribe")]
-        public async Task<IActionResult> SubscribeTeacherLesson([FromQuery]int lessonId)
+        [HttpPost("subscribe/{lessonId:int}")]
+        [Authorize(Roles = "student")]
+        public async Task<IActionResult> SubscribeTeacherLesson(int lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 
@@ -135,8 +139,9 @@ namespace backend.Controllers
             return Ok();
         }
 
-        [HttpDelete("unsubscribe")]
-        public async Task<IActionResult> UnsubscribeTeacherLesson([FromQuery]int lessonId)
+        [HttpDelete("unsubscribe/{lessonId:int}")]
+        [Authorize(Roles = "student")]
+        public async Task<IActionResult> UnsubscribeTeacherLesson(int lessonId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier);
 

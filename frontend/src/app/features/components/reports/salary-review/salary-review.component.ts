@@ -100,4 +100,7 @@ export class SalaryReviewComponent implements OnInit{
       })
     }
   }
+  onSalaryDownload() {
+    
+  }
 }

@@ -41,14 +41,14 @@ export class LessonService{
     }
 
     deleteLesson(lessonId: number) {
-        return this.httpClient.delete(`${this.apiUrl}/lessons/delete?lessonId=${lessonId}`, { withCredentials: true });
+        return this.httpClient.delete(`${this.apiUrl}/lessons/delete/${lessonId}`, { withCredentials: true });
     }
 
     unsubscribeLesson(lessonId: number) {
-        return this.httpClient.delete(`${this.apiUrl}/lessons/unsubscribe?lessonId=${lessonId}`, { withCredentials: true });
+        return this.httpClient.delete(`${this.apiUrl}/lessons/unsubscribe/${lessonId}`, { withCredentials: true });
     }
     
     subscribeLesson(lessonId: number) : Observable<any> {
-        return this.httpClient.post(`${this.apiUrl}/lessons/subscribe?lessonId=${lessonId}` , { withCredentials: true });
+        return this.httpClient.post(`${this.apiUrl}/lessons/subscribe/${lessonId}` , { withCredentials: true });
     }
 }

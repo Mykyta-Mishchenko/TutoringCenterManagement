@@ -93,7 +93,7 @@ namespace backend.Repositories
                 .Where(r => r.DateTime.Month == DateTime.Now.Month)
                 .Select(r=>new ReportScheduleDTO
                 {
-                    LessonId = r.StudentLesson.LessonId,
+                    LessonId = r.StudentLesson.TeacherLessonId,
                     Date = r.DateTime
                 })
                 .ToListAsync();

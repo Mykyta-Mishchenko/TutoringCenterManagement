@@ -24,13 +24,13 @@ namespace backend.Controllers
 
             if (ModelState.IsValid)
             {
-                await _profileService.SetUserProfileAsync(refreshToken, userProfile.ProfileImg);
+                await _profileService.SetUserProfileByRefreshTokenAsync(refreshToken, userProfile.ProfileImg);
             }
             return Ok();
         }
 
-        [HttpGet("image")]
-        public async Task<IActionResult> GetProfileImage([FromQuery]int userId)
+        [HttpGet("image/{userId:int}")]
+        public async Task<IActionResult> GetProfileImage(int userId)
         {
             var imageBytes = await _profileService.GetUserProfileAsync(userId);
             if(imageBytes == null)

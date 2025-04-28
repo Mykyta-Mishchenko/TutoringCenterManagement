@@ -29,8 +29,8 @@ namespace backend.Controllers
             return Ok(users);
         }
 
-        [HttpGet("user/role")]
-        public async Task<IActionResult> GetUserRole([FromQuery]int userId)
+        [HttpGet("user/role/{userId:int}")]
+        public async Task<IActionResult> GetUserRole(int userId)
         {
             var role = await _usersService.GetUserRole(userId);
 
@@ -42,8 +42,8 @@ namespace backend.Controllers
             return Ok(role);
         }
 
-        [HttpGet("user")]
-        public async Task<IActionResult> GetUserById([FromQuery] int userId)
+        [HttpGet("user/{userId:int}")]
+        public async Task<IActionResult> GetUserById(int userId)
         {
             var user = await _usersService.GetUser(userId);
 

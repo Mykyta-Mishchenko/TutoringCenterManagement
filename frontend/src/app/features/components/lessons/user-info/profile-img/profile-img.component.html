@@ -4,7 +4,7 @@
     </div>
 </div>
 @if(isOnOwnPage()){
-    <button class="btn btn-outline-primary btn-full" (click)="triggerFileInput()">Upload profile img</button>
+    <button class="btn btn-outline-primary btn-full" (click)="triggerFileInput()"><i class="bi bi-upload"></i> Upload profile img</button>
     <input type="file" id="fileInput" (change)="onFileSelected($event)" style="display: none;">
     <div *ngIf="errorMessage" class="alert alert-danger mt-2">
         {{ errorMessage }}

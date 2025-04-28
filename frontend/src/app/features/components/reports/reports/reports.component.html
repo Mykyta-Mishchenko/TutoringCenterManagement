@@ -2,10 +2,16 @@
     <div class="col-md-12">
         <div class="d-flex justify-content-between list-header">
             @if(isStandartView()){
-                <button class="btn btn-outline-success btn-long btn-create" (click)="onReportCreate()" *hasRole="'teacher'">
-                    <i class="bi bi-plus-lg"></i> 
-                    Create new
-                </button>
+                <div class="d-flex">
+                    <button class="btn btn-outline-success btn-long btn-create mr-4" (click)="onReportCreate()" *hasRole="'teacher'">
+                        <i class="bi bi-plus-lg"></i> 
+                        Create new
+                    </button>
+                    <button class="btn btn-outline-success btn-long btn-create" (click)="onReportsDownload()" *hasRole="'teacher'">
+                        <i class="bi bi-download"></i>
+                        Download reports
+                    </button>
+                </div>
             <div class="input-group mb-3 col-4">
                 <div class="input-group-prepend">
                     <span class="input-group-text bg-white">

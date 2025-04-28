@@ -36,7 +36,24 @@ namespace backend.Services
             return imageBytes;
         }
 
-        public async Task<string> SetUserProfileAsync(string refreshToken, IFormFile file)
+        public async Task<string> SetUserProfileByEmailTokenAsync(string email, IFormFile file)
+        {
+            var user = await _userRepository.GetUserAsync(email);
+            if(user == null)
+            {
+                return string.Empty;
+            }
+            var imgPath = await _userRepository.GetUserProfileAsync(user.UserId);
+
+            if (imgPath != null)
+            {
+                DeletePreviousImg(imgPath);
+            }
+
+            return await SaveProfileImgAsync(user.UserId, file);
+        }
+
+        public async Task<string> SetUserProfileByRefreshTokenAsync(string refreshToken, IFormFile file)
         {
             var session = await _sessionRepository.GetUserSessionByTokenAsync(refreshToken);
 

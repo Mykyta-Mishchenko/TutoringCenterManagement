@@ -41,7 +41,7 @@ namespace backend.Services
 
             var report = new Report
             {
-                LessonId = lesson.StudentLessonId,
+                StudentLessonId = lesson.StudentLessonId,
                 Description = createdReport.Description,
                 DateTime = createdReport.Date
             };

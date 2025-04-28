@@ -49,6 +49,11 @@ namespace backend.Services
             return Enum.Parse<UserRole>(role.Name, ignoreCase: true);
         }
 
+        public async Task<User?> GetUserByEmail(string email)
+        {
+            return await _usersRepository.GetUserAsync(email);
+        }
+
         private async Task<bool> IsUserTeacherAsync(int userId)
         {
             var userRoles = await _rolesRepository.GetUserRolesAsync(userId);

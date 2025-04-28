@@ -7,7 +7,10 @@
         <p class="card-text">
             <app-profile-info [subjects]="selectedUser()?.subjects"></app-profile-info>
             @if(isOnOwnPage()){
-                <button class="btn btn-success" (click)="onAddNewLesson()" *hasRole="'teacher'">Add new lesson</button>
+            <div class="d-flex flex-column">
+                <button class="btn btn-success mb-3" (click)="onAddNewLesson()" *hasRole="'teacher'"><i class="bi bi-plus-lg"></i> Add new lesson</button>
+                <button class="btn btn-warning" (click)="onDownloadSchedule()" *hasRole="'teacher'"><i class="bi bi-download"></i> Download schedule</button>
+            </div>
             }
         </p>
     </div>

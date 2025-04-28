@@ -7,8 +7,8 @@ namespace backend.Interfaces.Services
 {
     public interface ILessonsService
     {
-        public Task<OperationResult> CreateTeacherLessonAsync(int userId, LessonCreateDTO lesson);
-        public Task<OperationResult> CreateStudentLessonAsync(int userId, int lessonId);
+        public Task<OperationResult> CreateTeacherLessonAsync(int teacherId, LessonCreateDTO lesson);
+        public Task<OperationResult> CreateStudentLessonAsync(int studentId, int lessonId);
 
         public Task<IList<SubjectDTO>> GetAllSubjectsAsync();
         public Task<IList<LessonDTO>> GetUserLessonsAsync(int userId);

@@ -11,7 +11,7 @@ export class ProfileService {
     private apiUrl = environment.apiUrl;
 
     getUserProfile(userId: number): Observable<string> {
-        return this.httpClient.get(`${this.apiUrl}/profile/image?userId=${userId}`, {
+        return this.httpClient.get(`${this.apiUrl}/profile/image/${userId}`, {
             withCredentials: true,
             responseType: 'blob'
         }).pipe(

@@ -37,7 +37,7 @@ namespace backend.Services
             _lessonTypeRepository = lessonTypeRepository;
         }
 
-        public async Task<OperationResult> CreateTeacherLessonAsync(int userId, LessonCreateDTO lesson)
+        public async Task<OperationResult> CreateTeacherLessonAsync(int teacherId, LessonCreateDTO lesson)
         {
             var (result, teacherLesson) = await BuildTeacherLessonAsync(lesson);
 
@@ -63,10 +63,10 @@ namespace backend.Services
             return OperationResult.Success;
         }
 
-        public async Task<OperationResult> CreateStudentLessonAsync(int userId, int lessonId)
+        public async Task<OperationResult> CreateStudentLessonAsync(int studentId, int lessonId)
         {
-            var dbUser = await _usersService.GetUser(userId);
-            var dbStudentLesson = await _lessonsRepository.GetStudentLessonAsync(userId, lessonId);
+            var dbUser = await _usersService.GetUser(studentId);
+            var dbStudentLesson = await _lessonsRepository.GetStudentLessonAsync(studentId, lessonId);
 
             if (dbUser == null || dbStudentLesson != null)
             {
@@ -82,8 +82,8 @@ namespace backend.Services
 
             var newStudentLesson = new StudentLesson()
             {
-                StudentId = userId,
-                LessonId = lessonId,
+                StudentId = studentId,
+                TeacherLessonId = lessonId,
                 TeacherLesson = dbTeacherLesson
             };
 

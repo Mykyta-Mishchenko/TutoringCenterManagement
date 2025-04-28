@@ -131,6 +131,9 @@ export class ReportsComponent implements OnInit{
     this.reportMakerShow.set(true);
   }
 
+  onReportsDownload() {
+  }
+
   onReportEdit(reportId: number) {
     this.selectedReportId.set(reportId);
     this.reportMakerShow.set(true);

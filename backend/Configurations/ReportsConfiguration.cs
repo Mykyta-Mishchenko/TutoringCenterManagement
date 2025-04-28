@@ -18,7 +18,7 @@ namespace backend.Configurations
 
             builder.HasOne(r => r.StudentLesson)
                 .WithMany(sl => sl.Reports)
-                .HasForeignKey(r => r.LessonId)
+                .HasForeignKey(r => r.StudentLessonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.ToTable("Reports");

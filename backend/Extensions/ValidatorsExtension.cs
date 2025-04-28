@@ -12,8 +12,10 @@ namespace backend.Extensions
             services.AddFluentValidationAutoValidation();
             services.AddValidatorsFromAssemblyContaining<SignUpDTOValidator>();
             services.AddValidatorsFromAssemblyContaining<SignInDTOValidator>();
+            services.AddValidatorsFromAssemblyContaining<ApiSignUpDTOValidator>();
 
             services.AddValidatorsFromAssemblyContaining<UserProfileValidator>();
+            services.AddValidatorsFromAssemblyContaining<ApiProfileDTOValidator>();
 
             services.AddValidatorsFromAssemblyContaining<UsersFilterDTOValidator>();
 

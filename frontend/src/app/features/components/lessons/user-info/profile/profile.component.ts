@@ -50,6 +50,10 @@ export class ProfileComponent implements OnChanges {
     this.isModalVisible.set(true);
   }
 
+  onDownloadSchedule() {
+    
+  }
+
   onUpdate() {
     this.isModalVisible.set(false);
     this.getUserInfo();

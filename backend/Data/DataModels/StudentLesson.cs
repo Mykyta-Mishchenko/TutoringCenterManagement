@@ -6,7 +6,7 @@ namespace backend.Data.DataModels
     {
         [BindNever]
         public int StudentLessonId { get; set; }
-        public int LessonId { get; set; }
+        public int TeacherLessonId { get; set; }
         public int StudentId { get; set;}
 
         public User User { get; set; }

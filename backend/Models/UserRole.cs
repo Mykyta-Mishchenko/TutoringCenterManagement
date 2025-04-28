@@ -7,6 +7,8 @@ namespace backend.Models
         [EnumMember(Value = "student")]
         student = 1,
         [EnumMember(Value = "teacher")]
-        teacher = 2
+        teacher = 2,
+        [EnumMember(Value = "ApiClient")]
+        apiClient = 3
     }
 }

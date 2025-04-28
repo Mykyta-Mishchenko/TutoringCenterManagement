@@ -27,7 +27,7 @@ export class UsersService {
   };
 
   getUser(userId: number): Observable<UserInfo> {
-    return this.httpClient.get<UserInfo>(`${this.apiUrl}/user?userId=${userId}`, { withCredentials: true });
+    return this.httpClient.get<UserInfo>(`${this.apiUrl}/user/${userId}`, { withCredentials: true });
   }
 
   getUsersByFilter(filter: UsersFilter): Observable<UsersInfoList> {
@@ -36,7 +36,7 @@ export class UsersService {
   }
 
   getUserRole(userId: number): Observable<Roles> {
-    return this.httpClient.get<Roles>(`${this.apiUrl}/user/role?userId=${userId}`, { withCredentials: true });
+    return this.httpClient.get<Roles>(`${this.apiUrl}/user/role/${userId}`, { withCredentials: true });
   }
 
   private buildQueryString(filter: UsersFilter): string {

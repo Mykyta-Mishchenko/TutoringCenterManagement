@@ -138,7 +138,10 @@ namespace JwtBackend.Repositories
 
             if(role == UserRole.teacher)
             {
-                usersInfo = await query.Select(u => new UserInfoDTO()
+                usersInfo = await query
+                    .OrderByDescending(u=>u.TeacherLessons.Count)
+                        .ThenBy(u=> u.FirstName)
+                    .Select(u => new UserInfoDTO()
                 {
                     UserId = u.UserId,
                     FullName = u.FirstName + " " + u.LastName,
